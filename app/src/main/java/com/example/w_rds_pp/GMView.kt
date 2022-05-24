@@ -43,28 +43,48 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         minorPaint.color = Color.GREEN
     }
 
-    private fun processText(text: String, maxCharactersInLine: Int) : List<List<String>> {
-        fun splitWordIntoWords(word: String): List<String> =
-            if(word.length > maxCharactersInLine)
-                (listOf(word.substring(0, maxCharactersInLine))
-                        + splitWordIntoWords(word.substring(maxCharactersInLine - 1, word.length)))
+    private fun processText(text: DS, maxCharactersInLine: Int) : List<List<DS>> {
+        fun splitWordIntoWords(word: DS): List<DS> =
+            if(word.size > maxCharactersInLine)
+                (listOf(word.subList(0, maxCharactersInLine))
+                        + splitWordIntoWords(word.subList(maxCharactersInLine - 1, word.size)))
             else listOf(word)
 
+        // todo move to util
+        fun <T> List<T>.split(condition: (T) -> Boolean): List<List<T>> {
+            val result = mutableListOf<List<T>>()
+            var current = mutableListOf<T>()
+            for(it in this) {
+                if(condition(it)){
+                    if(current.isNotEmpty()){
+                        result.add(current)
+                        current = mutableListOf()
+                    }
+                } else {
+                    current.add(it)
+                }
+            }
+            if(current.isNotEmpty()){
+                result.add(current)
+            }
+            return result
+        }
+
         val words = text
-            .split(" ")
+            .split { p -> p.first == ' ' }
             .flatMap { splitWordIntoWords(it) }
 
-        val lines = mutableListOf<List<String>>()
+        val lines = mutableListOf<List<DS>>()
 
         var nCharactersInCurrentLine = -1
-        var currentLine = mutableListOf<String>()
+        var currentLine = mutableListOf<DS>()
         for(word in words){
-            if(nCharactersInCurrentLine + 1 + word.length > maxCharactersInLine) {
+            if(nCharactersInCurrentLine + 1 + word.size > maxCharactersInLine) {
                 lines.add(currentLine)
                 currentLine = mutableListOf()
                 nCharactersInCurrentLine = -1
             }
-            nCharactersInCurrentLine += 1 + word.length
+            nCharactersInCurrentLine += 1 + word.size
             currentLine.add(word)
         }
         if(currentLine.isNotEmpty()){
@@ -76,7 +96,7 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private fun drawText(canvas: Canvas) {
         val maxNCharInLine: Int = (canvas.width - xMargin - xMargin) / (majorLetterSize + charSpace)
 
-        val majorProcessedText: List<List<String>> = processText(gm.majorText, maxNCharInLine)
+        val majorProcessedText: List<List<DS>> = processText(gm.zp, maxNCharInLine)
 
         val deltaY = lineSpacing + majorLetterSize + minorLetterSize + majorMinorYSpace
 
@@ -87,8 +107,8 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
         fun printUnderline(){
             val path = Path()
-            path.moveTo(x, y)
-            path.lineTo(x + majorLetterSize, y)
+            path.moveTo(x, y + majorLetterSize + majorMinorYSpace)
+            path.lineTo(x + majorLetterSize, y + majorLetterSize + majorMinorYSpace)
             canvas.drawPath(path, underlinePaint)
         }
 
@@ -111,8 +131,9 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
         for(line in majorProcessedText) {
             for(word in line) {
-                for(majorC in word) {
-                    printMajorCharacter(majorC)
+                for(ds in word) {
+                    printMajorCharacter(ds.first)
+                    printMinorCharacter(ds.second)
                     printUnderline()
                     moveToNextCharacter()
                 }
