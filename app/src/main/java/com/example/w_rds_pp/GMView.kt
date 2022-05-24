@@ -24,10 +24,10 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val majorLetterSize = 90
     private val minorLetterSize = 60
 
-    private val lineSpacing = 30
-    private val xMargin = 50
+    private val lineSpacing = 50
+    private val xMargin = 77
 
-    private val majorMinorYSpace = 20
+    private val majorMinorYSpace = 14
 
     private val charSpace = 5
 
