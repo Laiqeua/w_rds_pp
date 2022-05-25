@@ -4,13 +4,14 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.example.w_rds_pp.GMStrHelper.withAllHighlightsRemoved
 import com.example.w_rds_pp.GMStrHelper.withLettersHighlighted
-import split
 import kotlin.math.min
 
 data class GMChar(
@@ -134,9 +135,9 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private fun drawText(canvas: Canvas) {
-        val maxNCharInLine: Int = (canvas.width - xMargin - xMargin) / (majorLetterSize + charSpace)
+        val maxNCharsInLine: Int = (canvas.width - xMargin - xMargin) / (majorLetterSize + charSpace)
 
-        val majorProcessedText: List<List<GMStr>> = processText(gm, maxNCharInLine)
+        val processedText: List<List<GMStr>> = processText(gm, maxNCharsInLine)
 
         val deltaY = lineSpacing + majorLetterSize + minorLetterSize + majorMinorYSpace
 
@@ -155,9 +156,9 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         fun moveToNewLine() { x = xMargin.toFloat(); y += deltaY }
         fun moveToNextCharacter() { x += deltaX }
         fun addToBoxesCord(gmChar: GMChar) =
-            boxes.add(Box(gmChar, Rectangle(x, y - majorLetterSize, x + majorLetterSize, y + deltaY - lineSpacing)))
+            boxes.add(Box(gmChar, RectF(x, y - majorLetterSize, x + majorLetterSize, y + deltaY - lineSpacing)))
 
-        for(line in majorProcessedText) {
+        for(line in processedText) {
             for(word in line) {
                 for(gmChar in word) {
                     printMajorCharacter(gmChar)
@@ -173,12 +174,7 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         this.boxes = boxes
     }
 
-    private data class Rectangle(val xBegin: Float, val yBegin: Float, val xEnd: Float, val yEnd: Float){
-        fun <T : Comparable<Float>> isInside(x: T, y: T): Boolean {
-            return x > xBegin && y > yBegin && x < xEnd && y < yEnd
-        }
-    }
-    private data class Box(val gmChar: GMChar, val rectangle: Rectangle)
+    private data class Box(val gmChar: GMChar, val rectangle: RectF)
 
     companion object {
         val TAG: String = GMView::class.java.name
