@@ -4,27 +4,55 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import java.util.LinkedList
+import com.example.w_rds_pp.GMStrHelper.withAllHighlightsRemoved
+import com.example.w_rds_pp.GMStrHelper.withLettersHighlighted
+import split
+import kotlin.math.min
 
-// todo gm len(minor) should == len(major)
+data class GMChar(
+    val major: Char,
+    val minor: Char,
+    val highlight: Boolean = false
+){
+    fun withHighlight(hl: Boolean) = GMChar(major, minor, hl)
+}
 
-data class BC(val ds: Pair<Char, Char>, val x: Float, val y: Float, val xMax: Float, val yMax: Float)
+typealias GMStr = List<GMChar>
+object GMStrHelper {
+    fun fromStr(major: String, minor: String): GMStr {
+        val n = min(major.length, minor.length)
+        val majorStr = major.substring(0, n)
+        val minorStr = minor.substring(0, n)
+        return majorStr.zip(minorStr).map { GMChar(it.first, it.second) }
+    }
+
+    fun GMStr.hl(f: (GMChar) -> Boolean) = this.map { it.withHighlight(f(it)) }
+    fun GMStr.withAllHighlightsRemoved(): GMStr = hl { false }
+    fun GMStr.withLettersHighlighted(letters: Collection<Char>): GMStr = hl { letters.contains(it.major) }
+}
+
 
 class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-    var gm: GM = GM("_p_ _p_ _ q_ e_r__", "aqb cqa h ph rhegt")
+    var gm: GMStr = GMStrHelper.fromStr("_p_ _p_ _ q_ e_r__", "aqb cqa h ph rhegt").withLettersHighlighted(setOf('p'))
+        set(value) {
+            field = value
+            invalidate()
+        }
 
-    var onLetterSelected: (Pair<Char, Char>) -> Int = { ds ->
+    var onLetterSelected: (GMChar) -> Unit = { ds ->
         Log.d(TAG, "onLetterSelected: ds=${ds}")
+        this.gm = gm.withAllHighlightsRemoved()
+                    .withLettersHighlighted(setOf(ds.major))
+        Log.d(TAG, "new GM: ${gm}")
     }
 
     private val minorPaint = Paint()
     private val majorPaint = Paint()
-    private val underlinePaint = Paint()
+    private val majorHLPaint = Paint()
 
     private val majorLetterSize = 90
     private val minorLetterSize = 60
@@ -36,54 +64,60 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val charSpace = 5
 
-    private var boxesCords: List<BC> = listOf()
+    private var boxes: List<Box> = listOf()
 
     init {
         isFocusable = true
         isFocusableInTouchMode = true
 
         minorPaint.textSize = 60f
-        minorPaint.color = Color.BLUE
+        minorPaint.color = Color.GREEN
 
         majorPaint.textSize = 90f
-        minorPaint.color = Color.GREEN
+        majorPaint.color = Color.BLACK
+
+        majorHLPaint.textSize = 90f
+        majorHLPaint.color = Color.BLUE
     }
 
-    private fun processText(text: DS, maxCharactersInLine: Int) : List<List<DS>> {
-        fun splitWordIntoWords(word: DS): List<DS> =
+    override fun draw(canvas: Canvas?) {
+        super.draw(canvas)
+        drawText(canvas!!)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if(event.action == MotionEvent.ACTION_DOWN) {
+            val x = event.x
+            val y = event.y
+            Log.d(TAG, "onTouchEvent: ACTION DOWN, x: ${x}, y: ${y}")
+            val boxes = boxes.filter { it.rectangle.isInside(x, y) }
+            if(boxes.size == 0) {
+                Log.d(TAG, "onTouchEvent: 0 matching")
+                return true
+            } else if(boxes.size > 1) {
+                Log.d(TAG, "onTouchEvent: >1 matching, choosing first box, all boxes: " + boxes.fold("") { acc, bc -> "$acc$bc; " })
+            }
+            onLetterSelected(boxes[0].gmChar)
+        }
+
+        return true
+    }
+
+    private fun processText(text: GMStr, maxCharactersInLine: Int) : List<List<GMStr>> {
+        fun splitWordIntoWords(word: GMStr): List<GMStr> =
             if(word.size > maxCharactersInLine)
                 (listOf(word.subList(0, maxCharactersInLine))
                         + splitWordIntoWords(word.subList(maxCharactersInLine - 1, word.size)))
             else listOf(word)
 
-        // todo move to util
-        fun <T> List<T>.split(condition: (T) -> Boolean): List<List<T>> {
-            val result = mutableListOf<List<T>>()
-            var current = mutableListOf<T>()
-            for(it in this) {
-                if(condition(it)){
-                    if(current.isNotEmpty()){
-                        result.add(current)
-                        current = mutableListOf()
-                    }
-                } else {
-                    current.add(it)
-                }
-            }
-            if(current.isNotEmpty()){
-                result.add(current)
-            }
-            return result
-        }
-
         val words = text
-            .split { p -> p.first == ' ' }
+            .split { p -> p.major == ' ' }
             .flatMap { splitWordIntoWords(it) }
 
-        val lines = mutableListOf<List<DS>>()
+        val lines = mutableListOf<List<GMStr>>()
 
         var nCharactersInCurrentLine = -1
-        var currentLine = mutableListOf<DS>()
+        var currentLine = mutableListOf<GMStr>()
         for(word in words){
             if(nCharactersInCurrentLine + 1 + word.size > maxCharactersInLine) {
                 lines.add(currentLine)
@@ -102,7 +136,7 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private fun drawText(canvas: Canvas) {
         val maxNCharInLine: Int = (canvas.width - xMargin - xMargin) / (majorLetterSize + charSpace)
 
-        val majorProcessedText: List<List<DS>> = processText(gm.zp, maxNCharInLine)
+        val majorProcessedText: List<List<GMStr>> = processText(gm, maxNCharInLine)
 
         val deltaY = lineSpacing + majorLetterSize + minorLetterSize + majorMinorYSpace
 
@@ -111,76 +145,40 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
         val deltaX = majorLetterSize + charSpace
 
-        val boxesCords = mutableListOf<BC>()
+        val boxes = mutableListOf<Box>()
 
-//        fun printUnderline(){
-//            val path = Path()
-//            path.moveTo(x, y + majorLetterSize + majorMinorYSpace)
-//            path.lineTo(x + majorLetterSize, y + majorLetterSize + majorMinorYSpace)
-//            canvas.drawPath(path, underlinePaint)
-//        }
-
-        fun printMajorCharacter(c: Char){
-            canvas.drawText(charArrayOf(c), 0, 1, x, y, majorPaint)
+        fun printMajorCharacter(gmChar: GMChar) {
+            canvas.drawText(charArrayOf(gmChar.major), 0, 1, x, y, if(gmChar.highlight) majorHLPaint else majorPaint )
         }
-
-        fun printMinorCharacter(c: Char){
+        fun printMinorCharacter(c: Char) =
             canvas.drawText(charArrayOf(c), 0, 1, x, y + majorLetterSize + majorMinorYSpace, minorPaint)
-        }
-
-        fun moveToNewLine() {
-            x = xMargin.toFloat()
-            y += deltaY
-        }
-
-        fun moveToNextCharacter(){
-            x += deltaX
-        }
-
-        fun addToBoxesCord(ds: Pair<Char, Char>) {
-            boxesCords.add(BC(ds, x, y - majorLetterSize, x + majorLetterSize, y + deltaY - lineSpacing))
-        }
+        fun moveToNewLine() { x = xMargin.toFloat(); y += deltaY }
+        fun moveToNextCharacter() { x += deltaX }
+        fun addToBoxesCord(gmChar: GMChar) =
+            boxes.add(Box(gmChar, Rectangle(x, y - majorLetterSize, x + majorLetterSize, y + deltaY - lineSpacing)))
 
         for(line in majorProcessedText) {
             for(word in line) {
-                for(ds in word) {
-                    printMajorCharacter(ds.first)
-                    printMinorCharacter(ds.second)
-//                    printUnderline()
-                    addToBoxesCord(ds)
+                for(gmChar in word) {
+                    printMajorCharacter(gmChar)
+                    printMinorCharacter(gmChar.minor)
+                    addToBoxesCord(gmChar)
                     moveToNextCharacter()
                 }
-                moveToNextCharacter() // space
+                moveToNextCharacter()
             }
             moveToNewLine()
         }
 
-        this.boxesCords = boxesCords
-
+        this.boxes = boxes
     }
 
-    override fun draw(canvas: Canvas?) {
-        super.draw(canvas)
-        drawText(canvas!!)
-    }
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        if(event.action == MotionEvent.ACTION_DOWN) {
-            val x = event.x
-            val y = event.y
-            Log.d(TAG, "onTouchEvent: ACTION DOWN, x: ${x}, y: ${y}")
-            val boxes = boxesCords.filter { x >= it.x && x <= it.xMax && y >= it.y && y <= it.yMax }
-            if(boxes.size == 0) {
-                Log.d(TAG, "onTouchEvent: 0 matching")
-                return true
-            } else if(boxes.size > 1) {
-                Log.d(TAG, "onTouchEvent: >1 matching, chosing first box, all boxes: " + boxes.fold("") { acc, bc -> "$acc$bc; " })
-            }
-            onLetterSelected(boxes[0].ds)
+    private data class Rectangle(val xBegin: Float, val yBegin: Float, val xEnd: Float, val yEnd: Float){
+        fun <T : Comparable<Float>> isInside(x: T, y: T): Boolean {
+            return x > xBegin && y > yBegin && x < xEnd && y < yEnd
         }
-
-        return true
     }
+    private data class Box(val gmChar: GMChar, val rectangle: Rectangle)
 
     companion object {
         val TAG: String = GMView::class.java.name
