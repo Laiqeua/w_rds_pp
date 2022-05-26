@@ -9,13 +9,13 @@ object Alphabets {
     val EN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toList()
 }
 
-class GameState {
-    lateinit var originalText: String
-    var selectedGMChar: GMChar? = null
-    lateinit var gmStr: GMStr
-    lateinit var lettersToGuess: Set<Char>
-    lateinit var alreadyUsedChars: Set<Char>
-}
+class GameState (
+    var originalText: String,
+    var gmStr: GMStr,
+    var lettersToGuess: Set<Char>,
+    var alreadyUsedChars: Set<Char>,
+    var selectedGMChar: GMChar? = null,
+)
 
 class GameActivity : AppCompatActivity() {
     private lateinit var keyboardView: KeyboardView
@@ -23,9 +23,15 @@ class GameActivity : AppCompatActivity() {
     private lateinit var removeButton: Button
     private lateinit var resetButton: Button
 
+    private lateinit var gs: GameState
 
-    private var gs = GameState()
-
+    private var gm: GMStr = emptyList()
+        get() = gs.gmStr
+        set(value){
+            field = value
+            gmView.gm = value
+            gs.gmStr = value
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,31 +43,29 @@ class GameActivity : AppCompatActivity() {
         keyboardView.onClick = ::onKeyboardsKeyClicked
         gmView.onLetterSelected = ::onGMCharSelected
 
-        gs.originalText = "Why, dear boy, we don’t send wizards to Azkaban just for blowing up their aunts.".uppercase()
 
-        val minorText = createMinorText(gs.originalText)
-        val (majorText, lettersToGuess) = createMajorText(gs.originalText, 0.5)
-        gs.lettersToGuess = lettersToGuess
-        gmView.gm = GMStrHelper.fromStr(majorText, minorText)
+        val originalText = "Why, dear boy, we don’t send wizards to Azkaban just for blowing up their aunts.".uppercase()
+
+        val minorText = createMinorText(originalText)
+        val (majorText, lettersToGuess) = createMajorText(originalText, 0.5)
+
+        gs = GameState(originalText, GMStrHelper.fromStr(majorText, minorText), lettersToGuess, emptySet())
+        gmView.gm = gs.gmStr
 
         keyboardView.disabledKeys = Alphabets.EN.filter { !lettersToGuess.contains(it) }.toSet()
-
-        gs.alreadyUsedChars = setOf()
-
         removeButton.setOnClickListener { resetSelected() }
-
         resetButton.setOnClickListener { resetAll() }
     }
 
     private fun onKeyboardsKeyClicked(c: Char){
         if(gs.alreadyUsedChars.contains(c)){
-            onGMCharSelected(gmView.gm.find { it.major == c }!!)
+            onGMCharSelected(gm.find { it.major == c }!!)
             return
         }
 
         if(gs.selectedGMChar == null) return
         if (gs.selectedGMChar!!.major == '_' || gs.lettersToGuess.contains(gs.selectedGMChar!!.major)) {
-            gmView.gm = gmView.gm.map {
+            gm = gm.map {
                 if(it.minor == gs.selectedGMChar!!.minor) {
                     if(it.major != '_'){
                         gs.alreadyUsedChars = gs.alreadyUsedChars.filter { x -> x != it.major }.toSet()
@@ -90,18 +94,18 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun resetAll() {
-        gmView.gm = gmView.gm.map { if (gs.alreadyUsedChars.contains(it.major)) it.withMajor('_') else it }
+        gm = gm.map { if (gs.alreadyUsedChars.contains(it.major)) it.withMajor('_') else it }
         gs.alreadyUsedChars = emptySet()
     }
 
     private fun resetSelected(){
         if(gs.selectedGMChar == null) return
         gs.alreadyUsedChars = gs.alreadyUsedChars.filter { it != gs.selectedGMChar!!.major }.toSet()
-        gmView.gm = gmView.gm.map { if (it.minor == gs.selectedGMChar!!.minor) it.withMajor('_') else it }
+        gm = gm.map { if (it.minor == gs.selectedGMChar!!.minor) it.withMajor('_') else it }
     }
 
     private fun checkForCompletion() {
-        if(gmView.gm.map { it.major }.joinToString("") == gs.originalText) {
+        if(gm.map { it.major }.joinToString("") == gs.originalText) {
             Toast.makeText(applicationContext, "Completed", Toast.LENGTH_LONG).show()
         }
     }
