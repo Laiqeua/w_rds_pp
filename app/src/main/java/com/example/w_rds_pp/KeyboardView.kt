@@ -1,7 +1,10 @@
 package com.example.w_rds_pp
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -66,7 +69,7 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
         else
             keyPG
 
-    private val margin = 20f
+    private val marginToWidth = 0.020f
 
     private val keyHeightToItsWidth = 1.6f
     private val spaceBetweenKeysToWidth = 0.01f
@@ -88,6 +91,15 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
 
         disabledKeyPG.text.color = Color.rgb(100, 100, 100)
         activeKeyPG.text.color = Color.rgb(50, 50, 50)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        // todo it may be improved
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val m = computeMeasures(width)
+
+        val desiredHeight = keyboardSpecification.size * (m.betweenKeysSpace + m.keyHeight) + m.betweenKeysSpace
+        setMeasuredDimension(widthMeasureSpec, desiredHeight.toInt())
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -112,37 +124,45 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
         canvas?.run { drawKeyboard(canvas) }
     }
 
-    private fun drawKeyboard(canvas: Canvas) {
-        val kw: Float = canvas.width - (2 * margin)
+    data class Measurements(val margin: Float, val kw: Float, val betweenKeysSpace: Float,
+                            val maxNOfKeysInRow: Int, val keyWidth: Float, val keyHeight: Float)
+
+    private fun computeMeasures(width: Int): Measurements {
+        val margin = width * marginToWidth
+        val kw: Float = width - (2 * margin)
         val betweenKeysSpace: Float = kw * spaceBetweenKeysToWidth
 
         val maxNOfKeysInRow = keyboardSpecification.maxOf { it.size }
 
         val keyWidth = (kw - ((betweenKeysSpace - 1) * maxNOfKeysInRow)) / maxNOfKeysInRow
         val keyHeight: Float = keyWidth * keyHeightToItsWidth
+        return Measurements(margin, kw, betweenKeysSpace, maxNOfKeysInRow, keyWidth, keyHeight)
+    }
 
-        adjustFontSize(keyWidth * keyTextSizeToKeySize, keyHeight * keyTextSizeToKeySize)
+    private fun drawKeyboard(canvas: Canvas) {
+        val m = computeMeasures(canvas.width)
+        adjustFontSize(m.keyWidth * keyTextSizeToKeySize, m.keyHeight * keyTextSizeToKeySize)
 
         val boxes: MutableList<Pair<Char, RectF>> = mutableListOf()
 
-        var y: Float = margin + keyHeight + betweenKeysSpace
+        var y: Float = m.margin + m.keyHeight + m.betweenKeysSpace
         for(row in keyboardSpecification) {
-            val additionalRowMargin = (maxNOfKeysInRow - row.size) * (keyWidth + betweenKeysSpace) / 2
-            var x = margin + additionalRowMargin
+            val additionalRowMargin = (m.maxNOfKeysInRow - row.size) * (m.keyWidth + m.betweenKeysSpace) / 2
+            var x = m.margin + additionalRowMargin
             for (c in row) {
                 val pg = findPaintGroup(c)
 
-                val rect = RectF(x, (y - keyHeight), (x + keyWidth), y)
+                val rect = RectF(x, (y - m.keyHeight), (x + m.keyWidth), y)
                 boxes.add(Pair(c, rect))
                 canvas.drawRect(rect, pg.bg)
 
-                val additionalKeyTextXMargin = (keyWidth - pg.text.measureCharWidth(c)) / 2
-                val additionalKeyTextYMargin = (keyHeight - pg.text.measureCharHeight(c)) / 2
+                val additionalKeyTextXMargin = (m.keyWidth - pg.text.measureCharWidth(c)) / 2
+                val additionalKeyTextYMargin = (m.keyHeight - pg.text.measureCharHeight(c)) / 2
                 canvas.drawText(charArrayOf(c), 0, 1, x + additionalKeyTextXMargin, y - additionalKeyTextYMargin, pg.text)
 
-                x += keyWidth + betweenKeysSpace
+                x += m.keyWidth + m.betweenKeysSpace
             }
-            y += keyHeight + betweenKeysSpace
+            y += m.keyHeight + m.betweenKeysSpace
         }
 
         this.boxes = boxes
