@@ -21,12 +21,36 @@ object KeyboardSpecifications {
 class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) {
     var keyboardSpecification: KeyboardSpecification = KeyboardSpecifications.QWERTY
 
+    var disabledKeys: Set<Char> = setOf('K', 'F')
+    var activeKeys: Set<Char> = setOf('A', 'B')
+
     var onClick: (Char) -> Unit = { c ->
         Log.d(TAG, "onClick(default): c = $c")
     }
 
-    private val keyBGPaint = Paint()
-    private val keyTextPaint = Paint()
+    private class PaintGroup {
+        val bg: Paint = Paint()
+        val text: Paint = Paint()
+    }
+
+    private val keyPG = PaintGroup()
+    private val activeKeyPG = PaintGroup()
+    private val disabledKeyPG = PaintGroup()
+
+    private fun updateTextSize(value: Float) {
+        keyPG.text.textSize = value
+        activeKeyPG.text.textSize = value
+        disabledKeyPG.text.textSize = value
+    }
+
+    private fun findPaintGroup(c: Char) =
+        if(disabledKeys.contains(c))
+            disabledKeyPG
+        else if(activeKeys.contains(c))
+            activeKeyPG
+        else
+            keyPG
+
     private val margin = 20f
 
     private val keyHeightToItsWidth = 1.6f
@@ -38,9 +62,17 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
     private var boxes: List<Pair<Char, RectF>> = emptyList()
 
     init {
-        keyBGPaint.color = Color.LTGRAY
-//        keyTextPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-        keyTextPaint.isAntiAlias = true
+        // todo why is intellij not showing color picker ?
+        disabledKeyPG.bg.color = Color.rgb(220, 220, 220)
+        keyPG.bg.color = Color.rgb(180, 180, 180)
+        activeKeyPG.bg.color = Color.rgb(160, 160, 160)
+
+        keyPG.text.isAntiAlias = true
+        activeKeyPG.text.isAntiAlias = true
+        disabledKeyPG.text.isAntiAlias = true
+
+        disabledKeyPG.text.color = Color.rgb(100, 100, 100)
+        activeKeyPG.text.color = Color.rgb(50, 50, 50)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -83,13 +115,15 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
             val additionalRowMargin = (maxNOfKeysInRow - row.size) * (keyWidth + betweenKeysSpace) / 2
             var x = margin + additionalRowMargin
             for (c in row) {
+                val pg = findPaintGroup(c)
+
                 val rect = RectF(x, (y - keyHeight), (x + keyWidth), y)
                 boxes.add(Pair(c, rect))
-                canvas.drawRect(rect, keyBGPaint)
+                canvas.drawRect(rect, pg.bg)
 
-                val additionalKeyTextXMargin = (keyWidth - keyTextPaint.measureCharWidth(c)) / 2
-                val additionalKeyTextYMargin = (keyHeight - keyTextPaint.measureCharHeight(c)) / 2
-                canvas.drawText(charArrayOf(c), 0, 1, x + additionalKeyTextXMargin, y - additionalKeyTextYMargin, keyTextPaint)
+                val additionalKeyTextXMargin = (keyWidth - pg.text.measureCharWidth(c)) / 2
+                val additionalKeyTextYMargin = (keyHeight - pg.text.measureCharHeight(c)) / 2
+                canvas.drawText(charArrayOf(c), 0, 1, x + additionalKeyTextXMargin, y - additionalKeyTextYMargin, pg.text)
 
                 x += keyWidth + betweenKeysSpace
             }
@@ -103,7 +137,7 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
         if(fontSizeAdjustedFor.first == keyWidth && fontSizeAdjustedFor.second == keyHeight) {
             return
         }
-        keyTextPaint.textSize = min(findFontSize(keyWidth, FindFontSize.WIDTH), findFontSize(keyHeight, FindFontSize.HEIGHT))
+        updateTextSize(min(findFontSize(keyWidth, FindFontSize.WIDTH), findFontSize(keyHeight, FindFontSize.HEIGHT)))
     }
 
     companion object {
