@@ -22,10 +22,22 @@ object KeyboardSpecifications {
 }
 
 class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) {
-    var keyboardSpecification: KeyboardSpecification = KeyboardSpecifications.PL
+    var keyboardSpecification: KeyboardSpecification = KeyboardSpecifications.QWERTY
+    set(value) {
+        field = value
+        invalidate()
+    }
 
     var disabledKeys: Set<Char> = setOf('K', 'F')
+    set(value) {
+        field = value
+        invalidate()
+    }
     var activeKeys: Set<Char> = setOf('A', 'B')
+    set(value) {
+        field = value
+        invalidate()
+    }
 
     var onClick: (Char) -> Unit = { c ->
         Log.d(TAG, "onClick(default): c = $c")
