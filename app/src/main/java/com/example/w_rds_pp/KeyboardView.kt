@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import java.lang.Float.min
 
@@ -40,6 +41,23 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
         keyBGPaint.color = Color.LTGRAY
 //        keyTextPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
         keyTextPaint.isAntiAlias = true
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if(event.action == MotionEvent.ACTION_DOWN) {
+            val x = event.x
+            val y = event.y
+            Log.d(GMView.TAG, "onTouchEvent: ACTION DOWN, x: ${x}, y: ${y}")
+            val boxes = boxes.filter { it.second.isInside(x, y) }
+            if(boxes.isEmpty()) {
+                Log.d(GMView.TAG, "onTouchEvent: 0 matching")
+                return true
+            } else if(boxes.size > 1) {
+                Log.d(GMView.TAG, "onTouchEvent: >1 matching, choosing first box, all boxes: " + boxes.fold("") { acc, bc -> "$acc$bc; " })
+            }
+            onClick(boxes[0].first)
+        }
+        return true
     }
 
     override fun draw(canvas: Canvas?) {
