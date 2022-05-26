@@ -16,10 +16,13 @@ object KeyboardSpecifications {
         listOf('A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'),
         listOf('Z', 'X', 'C', 'V', 'B', 'N', 'M')
     )
+    val PL: KeyboardSpecification = listOf(
+        listOf('Ą', 'Ć', 'Ę', 'Ł', 'Ń', 'Ó', 'Ś', 'Ź', 'Ż'),
+    ) + QWERTY
 }
 
 class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) {
-    var keyboardSpecification: KeyboardSpecification = KeyboardSpecifications.QWERTY
+    var keyboardSpecification: KeyboardSpecification = KeyboardSpecifications.PL
 
     var disabledKeys: Set<Char> = setOf('K', 'F')
     var activeKeys: Set<Char> = setOf('A', 'B')
