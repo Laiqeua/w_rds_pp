@@ -31,12 +31,12 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
         invalidate()
     }
 
-    var disabledKeys: Set<Char> = setOf('K', 'F')
+    var disabledKeys: Set<Char> = emptySet()
     set(value) {
         field = value
         invalidate()
     }
-    var activeKeys: Set<Char> = setOf('A', 'B')
+    var activeKeys: Set<Char> = emptySet()
     set(value) {
         field = value
         invalidate()
@@ -114,7 +114,8 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
             } else if(boxes.size > 1) {
                 Log.d(GMView.TAG, "onTouchEvent: >1 matching, choosing first box, all boxes: " + boxes.fold("") { acc, bc -> "$acc$bc; " })
             }
-            onClick(boxes[0].first)
+            val c = boxes[0].first
+            if(!disabledKeys.contains(c)) onClick(c)
         }
         return true
     }

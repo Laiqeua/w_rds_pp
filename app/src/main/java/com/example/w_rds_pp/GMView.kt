@@ -4,22 +4,19 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import com.example.w_rds_pp.GMStrHelper.withAllHighlightsRemoved
-import com.example.w_rds_pp.GMStrHelper.withLettersHighlighted
 import kotlin.math.min
 
 data class GMChar(
     val major: Char,
-    val minor: Char,
-    val highlight: Boolean = false
+    val minor: Char
 ){
-    fun withHighlight(hl: Boolean) = GMChar(major, minor, hl)
+    fun withMinor(c: Char) = GMChar(major, c)
+    fun withMajor(c: Char) = GMChar(c, minor)
 }
 
 typealias GMStr = List<GMChar>
@@ -30,40 +27,37 @@ object GMStrHelper {
         val minorStr = minor.substring(0, n)
         return majorStr.zip(minorStr).map { GMChar(it.first, it.second) }
     }
-
-    fun GMStr.hl(f: (GMChar) -> Boolean) = this.map { it.withHighlight(f(it)) }
-    fun GMStr.withAllHighlightsRemoved(): GMStr = hl { false }
-    fun GMStr.withLettersHighlighted(letters: Collection<Char>): GMStr = hl { letters.contains(it.major) }
 }
 
 
 class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-    var gm: GMStr = GMStrHelper.fromStr("_p_ _p_ _ q_ e_r__", "aqb cqa h ph rhegt").withLettersHighlighted(setOf('p'))
+    var gm: GMStr = GMStrHelper.fromStr("_p_ _p_ _ q_ e_r__", "aqb cqa h ph rhegt")
         set(value) {
             field = value
             invalidate()
         }
 
-    var onLetterSelected: (GMChar) -> Unit = { ds ->
-        Log.d(TAG, "onLetterSelected: ds=${ds}")
-        this.gm = gm.withAllHighlightsRemoved()
-                    .withLettersHighlighted(setOf(ds.major))
-        Log.d(TAG, "new GM: ${gm}")
-    }
+    var toBeHighlightedByMinor: Set<Char> = setOf()
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var onLetterSelected: (GMChar) -> Unit = { Log.d(TAG, "onLetterSelected: ds=${it}") }
 
     private val minorPaint = Paint()
     private val majorPaint = Paint()
     private val majorHLPaint = Paint()
 
-    private val majorLetterSize = 90
-    private val minorLetterSize = 60
+    private val majorLetterSize = 60
+    private val minorLetterSize = 40
 
     private val lineSpacing = 50
     private val xMargin = 77
 
-    private val majorMinorYSpace = 14
+    private val majorMinorYSpace = 2
 
-    private val charSpace = 5
+    private val charSpace = 6
 
     private var boxes: List<Box> = listOf()
 
@@ -71,13 +65,13 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         isFocusable = true
         isFocusableInTouchMode = true
 
-        minorPaint.textSize = 60f
+        minorPaint.textSize = 40f
         minorPaint.color = Color.GREEN
 
-        majorPaint.textSize = 90f
+        majorPaint.textSize = 60f
         majorPaint.color = Color.BLACK
 
-        majorHLPaint.textSize = 90f
+        majorHLPaint.textSize = 60f
         majorHLPaint.color = Color.BLUE
     }
 
@@ -149,7 +143,8 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         val boxes = mutableListOf<Box>()
 
         fun printMajorCharacter(gmChar: GMChar) {
-            canvas.drawText(charArrayOf(gmChar.major), 0, 1, x, y, if(gmChar.highlight) majorHLPaint else majorPaint )
+            val p = if(toBeHighlightedByMinor.contains(gmChar.minor)) majorHLPaint else majorPaint
+            canvas.drawText(charArrayOf(gmChar.major), 0, 1, x, y, p )
         }
         fun printMinorCharacter(c: Char) =
             canvas.drawText(charArrayOf(c), 0, 1, x, y + majorLetterSize + majorMinorYSpace, minorPaint)
