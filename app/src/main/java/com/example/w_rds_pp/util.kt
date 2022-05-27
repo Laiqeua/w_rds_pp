@@ -3,7 +3,10 @@ package com.example.w_rds_pp
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
+import com.google.gson.Gson
 import kotlin.math.abs
+
+val GsonInstance = Gson()
 
 fun <T> List<T>.split(condition: (T) -> Boolean): List<List<T>> {
     val result = mutableListOf<List<T>>()
