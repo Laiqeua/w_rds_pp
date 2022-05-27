@@ -25,21 +25,8 @@ data class GameStateImpl(
 object GameStateHelper {
     fun new(text: String, difficulty: Double = 0.5, alphabet: List<Char> = Alphabets.EN): GameState {
         val normalizedText = text.uppercase()
-        fun createMajorText(): Pair<String, Set<Char>> {
-            val normalizedDifficulty = max(0.0, min(difficulty, 1.0))
-            val Q = alphabet.intersect(normalizedText.asIterable().toSet())
-            val nOfLetterToBeHidden = (Q.size * normalizedDifficulty).toInt()
-            // todo check how shuffled deals with equal distribution
-            val lettersToBeHidden = Q.shuffled().subList(0, nOfLetterToBeHidden).toHashSet()
-            val majorText = normalizedText.map { if(lettersToBeHidden.contains(it)) '_' else it }.joinToString("")
-            return majorText to lettersToBeHidden
-        }
-        fun createMinorText(): String {
-            val m: Map<Char, Char> = alphabet.zip(alphabet.shuffled()).toMap()
-            return normalizedText.map { m.getOrDefault(it, it) }.joinToString("")
-        }
-        val (major, lettersToGuess) = createMajorText()
-        val minor = createMinorText()
+        val (major, lettersToGuess) = createMajorText(normalizedText, difficulty, alphabet)
+        val minor = createMinorText(normalizedText, alphabet)
         return GameStateImpl(normalizedText, GMStrHelper.fromStr(major, minor), lettersToGuess, emptySet(), null)
     }
 
@@ -49,6 +36,20 @@ object GameStateHelper {
     fun GameState.isCompleted(): Boolean =
         gmStr.map { it.major }.joinToString("") == originalText
 
+    private fun createMajorText(text: String, difficulty: Double, alphabet: List<Char>): Pair<String, Set<Char>> {
+        val normalizedDifficulty = max(0.0, min(difficulty, 1.0))
+        val Q = alphabet.intersect(text.asIterable().toSet())
+        val nOfLetterToBeHidden = (Q.size * normalizedDifficulty).toInt()
+        // todo check how shuffled deals with equal distribution
+        val lettersToBeHidden = Q.shuffled().subList(0, nOfLetterToBeHidden).toHashSet()
+        val majorText = text.map { if(lettersToBeHidden.contains(it)) '_' else it }.joinToString("")
+        return majorText to lettersToBeHidden
+    }
+
+    private fun createMinorText(text: String, alphabet: List<Char>): String {
+        val m: Map<Char, Char> = alphabet.zip(alphabet.shuffled()).toMap()
+        return text.map { m.getOrDefault(it, it) }.joinToString("")
+    }
 }
 
 
