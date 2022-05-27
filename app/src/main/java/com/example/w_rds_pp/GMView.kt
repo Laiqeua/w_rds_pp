@@ -142,31 +142,29 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
         val boxes = mutableListOf<Box>()
 
-        fun printMajorCharacter(gmChar: GMChar) {
-            val p = if(toBeHighlightedByMinor.contains(gmChar.minor)) majorHLPaint else majorPaint
-            canvas.drawText(charArrayOf(gmChar.major), 0, 1, x, y, p )
-        }
-        fun printMinorCharacter(c: Char) =
-            canvas.drawText(charArrayOf(c), 0, 1, x, y + majorLetterSize + majorMinorYSpace, minorPaint)
-        fun moveToNewLine() { x = xMargin.toFloat(); y += deltaY }
-        fun moveToNextCharacter() { x += deltaX }
-        fun addToBoxesCord(gmChar: GMChar) =
-            boxes.add(Box(gmChar, RectF(x, y - majorLetterSize, x + majorLetterSize, y + deltaY - lineSpacing)))
-
         for(line in processedText) {
             for(word in line) {
                 for(gmChar in word) {
-                    printMajorCharacter(gmChar)
-                    printMinorCharacter(gmChar.minor)
-                    addToBoxesCord(gmChar)
-                    moveToNextCharacter()
+                    val p = if(toBeHighlightedByMinor.contains(gmChar.minor)) majorHLPaint else majorPaint
+                    canvas.printCharacter(gmChar.major, x, y, p)
+                    canvas.printCharacter(gmChar.minor, x, y + majorLetterSize + majorMinorYSpace, minorPaint)
+                    boxes.add(Box(gmChar, RectF(x, y - majorLetterSize, x + majorLetterSize, y + deltaY - lineSpacing)))
+                    x += deltaX
                 }
-                moveToNextCharacter()
+                x += deltaX
             }
-            moveToNewLine()
+            x = xMargin.toFloat()
+            y += deltaY
         }
 
         this.boxes = boxes
+    }
+
+    private fun Canvas.printCharacter(c: Char, x: Float, y: Float, paint: Paint) {
+        val wWidth = paint.measureCharWidth('W')
+        val cWidth = paint.measureCharWidth(c)
+        val additionalMargin: Float = if(wWidth > cWidth) { (wWidth - cWidth) / 2 } else 0f
+        drawText(charArrayOf(c), 0, 1, x + additionalMargin, y, paint)
     }
 
     private data class Box(val gmChar: GMChar, val rectangle: RectF)
