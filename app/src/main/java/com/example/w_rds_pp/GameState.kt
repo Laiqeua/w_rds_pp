@@ -2,14 +2,8 @@ package com.example.w_rds_pp
 
 import android.content.SharedPreferences
 import com.example.w_rds_pp.GameStateHelper.serialize
-import org.json.JSONObject
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
 import java.lang.Double.max
 import java.lang.Double.min
-import java.util.*
 
 
 interface GameState {
@@ -70,28 +64,27 @@ class MGS_AutoSaveToSystemPreferences(
     private val prefKey: String,
     private val pref: SharedPreferences,
 ) : MutableGameState {
-    private val gs: GameState
+    private val initGS: GameState = readImmutableGSFromPref(prefKey, pref) ?: GameStateHelper.new("")
 
-    init {
-        val serializedGS = pref.getString(prefKey, null)
-        if(serializedGS == null) {
-            gs = GameStateHelper.new("")
-            update()
-        } else {
-            gs = GameStateHelper.deserializeGameState(serializedGS)
+    override var originalText: String = initGS.originalText
+        set(value) { field = value; update() }
+    override var gmStr: GMStr = initGS.gmStr
+        set(value) { field = value; update() }
+    override var lettersToGuess: Set<Char> = initGS.lettersToGuess
+        set(value) { field = value; update() }
+    override var alreadyUsedChars: Set<Char> = initGS.alreadyUsedChars
+        set(value) { field = value; update() }
+    override var selectedGMChar: GMChar? = initGS.selectedGMChar
+        set(value) { field = value; update() }
+
+    fun update() = saveToPref(prefKey, pref)
+
+    companion object {
+        fun readImmutableGSFromPref(prefKey: String, pref: SharedPreferences): GameState? {
+            val serializedGS = pref.getString(prefKey, null) ?: return null
+            return GameStateHelper.deserializeGameState(serializedGS)
         }
+        fun GameState.saveToPref(prefKey: String, pref: SharedPreferences) = pref.edit().putString(prefKey, serialize()).apply()
+        fun GameState.saveToPrefNow(prefKey: String, pref: SharedPreferences) = pref.edit().putString(prefKey, serialize()).commit()
     }
-
-    override var originalText: String = gs.originalText
-        set(value) { field = value; update() }
-    override var gmStr: GMStr = gs.gmStr
-        set(value) { field = value; update() }
-    override var lettersToGuess: Set<Char> = gs.lettersToGuess
-        set(value) { field = value; update() }
-    override var alreadyUsedChars: Set<Char> = gs.alreadyUsedChars
-        set(value) { field = value; update() }
-    override var selectedGMChar: GMChar? = gs.selectedGMChar
-        set(value) { field = value; update() }
-
-    fun update() = pref.edit().putString(prefKey, serialize()).apply()
 }

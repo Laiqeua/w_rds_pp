@@ -3,7 +3,7 @@ package com.example.w_rds_pp
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
-import com.example.w_rds_pp.GameStateHelper.serialize
+import com.example.w_rds_pp.MGS_AutoSaveToSystemPreferences.Companion.saveToPref
 
 class GameActivity : AppCompatActivity() {
     private lateinit var fragmentContainerView: FragmentContainerView
@@ -19,7 +19,7 @@ class GameActivity : AppCompatActivity() {
             "Why, dear boy, we don't send wizards to Azkaban just for blowing up their aunts."
         )
         val pref = getSharedPreferences(GAME_SATE_PREF_NAME, MODE_PRIVATE)
-        pref.edit().putString(prefKey, gs.serialize()).apply()
+        gs.saveToPref(prefKey, pref)
 
         val fragment = GameFragment.newInstance(prefKey)
 
