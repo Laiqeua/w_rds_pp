@@ -9,7 +9,10 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import kotlinx.coroutines.*
 import java.lang.Float.min
+import java.util.EnumMap
+import java.util.Hashtable
 
 typealias KeyboardSpecification = List<List<Char>>
 
@@ -24,7 +27,12 @@ object KeyboardSpecifications {
     ) + QWERTY
 }
 
+/**
+ * Key animation won't work unless you set animationScope
+ */
 class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) {
+    var animationScope: CoroutineScope? = null
+
     var keyboardSpecification: KeyboardSpecification = KeyboardSpecifications.QWERTY
     set(value) {
         field = value
@@ -32,11 +40,6 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
     }
 
     var disabledKeys: Set<Char> = emptySet()
-    set(value) {
-        field = value
-        invalidate()
-    }
-    var activeKeys: Set<Char> = emptySet()
     set(value) {
         field = value
         invalidate()
@@ -52,22 +55,7 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
     }
 
     private val keyPG = PaintGroup()
-    private val activeKeyPG = PaintGroup()
     private val disabledKeyPG = PaintGroup()
-
-    private fun updateTextSize(value: Float) {
-        keyPG.text.textSize = value
-        activeKeyPG.text.textSize = value
-        disabledKeyPG.text.textSize = value
-    }
-
-    private fun findPaintGroup(c: Char) =
-        if(disabledKeys.contains(c))
-            disabledKeyPG
-        else if(activeKeys.contains(c))
-            activeKeyPG
-        else
-            keyPG
 
     private val marginToWidth = 0.020f
 
@@ -79,18 +67,22 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
     private var fontSizeAdjustedFor: Pair<Float, Float> = Pair(-1f, -1f)
     private var boxes: List<Pair<Char, RectF>> = emptyList()
 
+    private val animationStartColor = 180
+    private val animationEndColor = 200
+    private val animationStepTimeMilliSec = 5L
+
+    // todo maybe java has some better map than hashmap if key is sth like char
+    private val animations: MutableMap<Char, PaintGroup> = Hashtable()
+
     init {
         // todo why is intellij not showing color picker ?
         disabledKeyPG.bg.color = Color.rgb(220, 220, 220)
         keyPG.bg.color = Color.rgb(180, 180, 180)
-        activeKeyPG.bg.color = Color.rgb(160, 160, 160)
 
         keyPG.text.isAntiAlias = true
-        activeKeyPG.text.isAntiAlias = true
         disabledKeyPG.text.isAntiAlias = true
 
         disabledKeyPG.text.color = Color.rgb(100, 100, 100)
-        activeKeyPG.text.color = Color.rgb(50, 50, 50)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -115,7 +107,10 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
                 Log.d(GMView.TAG, "onTouchEvent: >1 matching, choosing first box, all boxes: " + boxes.fold("") { acc, bc -> "$acc$bc; " })
             }
             val c = boxes[0].first
-            if(!disabledKeys.contains(c)) onClick(c)
+            if(!disabledKeys.contains(c)) {
+                startAnimationForKey(c)
+                onClick(c)
+            }
         }
         return true
     }
@@ -174,6 +169,44 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
             return
         }
         updateTextSize(min(findFontSize(keyWidth, FindFontSize.WIDTH), findFontSize(keyHeight, FindFontSize.HEIGHT)))
+    }
+
+    private fun updateTextSize(value: Float) {
+        keyPG.text.textSize = value
+        animations.forEach { _, pg -> pg.text.textSize = value }
+        disabledKeyPG.text.textSize = value
+    }
+
+    private fun findPaintGroup(c: Char) =
+        if(disabledKeys.contains(c))
+            disabledKeyPG
+        else if(animations.keys.contains(c))
+            animations[c]!!
+        else
+            keyPG
+
+    private fun createAnimationPaintGroup(): PaintGroup = PaintGroup().apply {
+        bg.color = keyPG.bg.color
+        text.isAntiAlias = true
+        text.textSize = keyPG.text.textSize
+    }
+
+    private fun startAnimationForKey(c: Char) {
+
+        if(animations.contains(c)) return
+        animations[c] = createAnimationPaintGroup()
+        animationScope?.launch {
+            val range = (animationStartColor..animationEndColor) +
+                        (animationStartColor..animationEndColor).reversed()
+            val pg = animations[c]!!
+            for(i in range) {
+                pg.bg.color = Color.rgb(i, i, i)
+                invalidate()
+                delay(animationStepTimeMilliSec)
+            }
+            animations.remove(c)
+            invalidate()
+        }
     }
 
     companion object {

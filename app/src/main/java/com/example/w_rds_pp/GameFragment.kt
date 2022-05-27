@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.example.w_rds_pp.GameStateHelper.isCompleted
 
 // todo try to remove !!s
@@ -58,6 +59,8 @@ class GameFragment : Fragment() {
         keyboardView.disabledKeys = Alphabets.EN.filter { !gs.lettersToGuess.contains(it) }.toSet()
 
         gmView.gm = gs.gmStr
+
+        keyboardView.animationScope = lifecycleScope
 
         return v
     }
