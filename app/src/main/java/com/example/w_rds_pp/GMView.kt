@@ -66,13 +66,13 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         isFocusableInTouchMode = true
 
         minorPaint.textSize = 40f
-        minorPaint.color = Color.GREEN
+        minorPaint.color = Color.BLUE
 
         majorPaint.textSize = 60f
         majorPaint.color = Color.BLACK
 
         majorHLPaint.textSize = 60f
-        majorHLPaint.color = Color.BLUE
+        majorHLPaint.color = Color.RED
     }
 
     override fun draw(canvas: Canvas?) {
