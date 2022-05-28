@@ -6,8 +6,6 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import com.example.w_rds_pp.MGS_AutoSaveToSystemPreferences.Companion.saveToPref
@@ -25,7 +23,7 @@ class NewGameCreatorActivityResultContract : ActivityResultContract<Unit, Int>()
 class NewGameCreatorActivity : AppCompatActivity() {
     private var difficulty: Double = 0.0
 
-    private lateinit var db: DataBase
+    private lateinit var db: AppsDatabase
     private lateinit var pref: SharedPreferences
 
     private var quote: Quote? = null
@@ -33,7 +31,7 @@ class NewGameCreatorActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        db = Room.databaseBuilder(applicationContext, DataBase::class.java, "words_app_db")
+        db = Room.databaseBuilder(applicationContext, AppsDatabase::class.java, "words_app_db")
             .createFromAsset("populated_db.db")
             .build()
 

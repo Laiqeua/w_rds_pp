@@ -20,6 +20,6 @@ interface QuoteDao {
 }
 
 @Database(entities = [Quote::class], version = 1, exportSchema = true)
-abstract class DataBase : RoomDatabase() {
+abstract class AppsDatabase : RoomDatabase() {
     abstract fun quoteDao(): QuoteDao
 }
