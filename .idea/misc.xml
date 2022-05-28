@@ -7,7 +7,7 @@
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.24427083333333333" />
         <entry key="app/src/main/res/drawable/ic_w_rds_app.xml" value="0.10520833333333333" />
         <entry key="app/src/main/res/layout/activity_game.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.14270833333333333" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/content_new_game_creator.xml" value="0.2713541666666667" />
         <entry key="app/src/main/res/layout/fragment_congratulation.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.2713541666666667" />
