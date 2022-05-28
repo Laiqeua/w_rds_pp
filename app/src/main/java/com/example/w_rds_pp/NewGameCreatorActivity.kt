@@ -22,37 +22,57 @@ class NewGameCreatorActivityResultContract : ActivityResultContract<Unit, Int>()
 
 class NewGameCreatorActivity : AppCompatActivity() {
     private var difficulty: Double = 0.0
+    // category == null means any category
+    private var category: String? = null
 
     private lateinit var db: AppsDatabase
     private lateinit var pref: SharedPreferences
 
     private var quote: Quote? = null
 
+    private lateinit var catFragment: SelectCategoryFragment
+    private lateinit var diffFragment: SelectDifficultyFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        db = Room.databaseBuilder(applicationContext, AppsDatabase::class.java, "words_app_db")
+        db = Room.databaseBuilder(applicationContext, AppsDatabase::class.java, "words_app3")
             .createFromAsset("populated_db.db")
             .build()
-
         pref = getSharedPreferences(GAME_SATE_PREF_NAME, Context.MODE_PRIVATE)
-
         setContentView(R.layout.activity_new_game_creator)
-
-        val selectDifficultyFragment = SelectDifficultyFragment()
-        selectDifficultyFragment.onDifficultySelected = ::onDifficultySelected
-
-        supportFragmentManager
-            .beginTransaction()
-            .add(R.id.fragment_container_view, selectDifficultyFragment)
-            .commit()
-
-        obtainQuote()
+        runCategorySelector()
     }
 
     private fun obtainQuote() = lifecycleScope.launch(Dispatchers.IO) {
-        val q = db.quoteDao().findRandom() ?: Quote(-1, "You forget to populate db", ":(")
-        quote = q
+        quote = (if(category == null) db.quoteDao().findRandom() else db.quoteDao().findRandomWhereCategory(category!!))
+            ?: Quote(-1, "You forget to populate db", ":(")
+    }
+
+    private fun runCategorySelector() = lifecycleScope.launch(Dispatchers.IO) {
+        val categories = db.quoteDao().findCategories()
+        catFragment = SelectCategoryFragment.newInstance(categories)
+        catFragment.onCategorySelected = ::onCategorySelected
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.fragment_container_view, catFragment)
+            .commit()
+    }
+
+    private fun runDifficultySelector() {
+        diffFragment = SelectDifficultyFragment()
+        diffFragment.onDifficultySelected = ::onDifficultySelected
+        supportFragmentManager
+            .beginTransaction()
+            .remove(catFragment)
+            .add(R.id.fragment_container_view, diffFragment)
+            .commit()
+    }
+
+    private fun onCategorySelected(c: String?){
+        category = c
+        obtainQuote()
+        runDifficultySelector()
     }
 
     private fun onDifficultySelected(d: Double) {

@@ -15,8 +15,18 @@ interface QuoteDao {
     @Query("select * from quote where id not in (:except) order by random() limit 1")
     fun findRandom(except: List<Long> = emptyList()): Quote?
 
+    @Query("select * from quote where category = (:category) and id not in (:except) order by random() limit 1")
+    fun findRandomWhereCategory(category: String, except: List<Long> = emptyList()): Quote?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOrUpdate(quote: Quote): Long
+
+    @Query("""
+        select category
+        from quote
+        group by category
+    """)
+    fun findCategories(): List<String>
 }
 
 @Database(entities = [Quote::class], version = 1, exportSchema = true)
