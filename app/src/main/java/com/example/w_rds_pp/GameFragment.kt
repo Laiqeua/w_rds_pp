@@ -79,13 +79,17 @@ class GameFragment : Fragment() {
                         gs.alreadyUsedChars = gs.alreadyUsedChars.filter { x -> x != it.major }.toSet()
                     }
                     val newIt = it.withMajor(c)
-                    gs.selectedGMChar = newIt
                     newIt
                 } else {
                     it
                 }
             }
+            gs.selectedGMChar = gs.selectedGMChar!!.withMajor(c)
             gs.alreadyUsedChars = gs.alreadyUsedChars + setOf(c)
+
+            // if user fills character we jump to next character to be filled if such exits
+            val nextGMChar = gm.find { it.i > gs.selectedGMChar!!.i && it.major == '_'}
+            if(nextGMChar != null) onGMCharSelected(nextGMChar)
         }
 
         checkForCompletion()
