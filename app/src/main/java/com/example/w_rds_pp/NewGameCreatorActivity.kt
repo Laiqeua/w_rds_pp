@@ -35,10 +35,7 @@ class NewGameCreatorActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        db = Room.databaseBuilder(applicationContext, AppsDatabase::class.java, "words_app3")
-            .createFromAsset("populated_db.db")
-            .build()
+        db = AppsDatabase.instance(applicationContext)
         pref = getSharedPreferences(GAME_SATE_PREF_NAME, Context.MODE_PRIVATE)
         setContentView(R.layout.activity_new_game_creator)
         runCategorySelector()

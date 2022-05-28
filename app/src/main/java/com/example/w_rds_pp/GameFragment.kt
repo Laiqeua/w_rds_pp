@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 // todo try to remove !!s
 
 class GameFragment : Fragment() {
-    private lateinit var gs_prefKey: String
+    private lateinit var gsPrefKey: String
     private lateinit var gs: MutableGameState
 
     private lateinit var keyboardView: KeyboardView
@@ -23,18 +23,14 @@ class GameFragment : Fragment() {
 
     private var gm: GMStr = emptyList()
         get() = gs.gmStr
-        set(value){
-            field = value
-            gmView.gm = value
-            gs.gmStr = value
-        }
+        set(value){ field = value; gmView.gm = value; gs.gmStr = value }
 
     var onPuzzleCompleted: () -> Unit = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            gs_prefKey = it.getString(ARG_PREF_KEY, "q")
+            gsPrefKey = it.getString(ARG_PREF_KEY, null)
         }
     }
 
@@ -43,7 +39,7 @@ class GameFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val pref = requireActivity().getSharedPreferences(GAME_SATE_PREF_NAME, Activity.MODE_PRIVATE)
-        gs = MGS_AutoSaveToSystemPreferences(gs_prefKey, pref)
+        gs = MGS_AutoSaveToSystemPreferences(gsPrefKey, pref)
 
         val v = inflater.inflate(R.layout.fragment_game, container, false)
 
@@ -70,11 +66,10 @@ class GameFragment : Fragment() {
             onGMCharSelected(gm.find { it.major == c }!!)
             return
         }
-
-        if(gs.selectedGMChar == null) return
-        if (gs.selectedGMChar!!.major == '_' || gs.lettersToGuess.contains(gs.selectedGMChar!!.major)) {
+        val selectedGMChar = gs.selectedGMChar ?: return  // todo it may not be good idea
+        if (selectedGMChar.major == '_' || gs.lettersToGuess.contains(selectedGMChar.major)) {
             gm = gm.map {
-                if(it.minor == gs.selectedGMChar!!.minor) {
+                if(it.minor == selectedGMChar.minor) {
                     if(it.major != '_'){
                         gs.alreadyUsedChars = gs.alreadyUsedChars.filter { x -> x != it.major }.toSet()
                     }
@@ -84,9 +79,8 @@ class GameFragment : Fragment() {
                     it
                 }
             }
-            gs.selectedGMChar = gs.selectedGMChar!!.withMajor(c)
+            gs.selectedGMChar = selectedGMChar.withMajor(c)
             gs.alreadyUsedChars = gs.alreadyUsedChars + setOf(c)
-
             // if user fills character we jump to next character to be filled if such exits
             val nextGMChar = gm.find { it.i > gs.selectedGMChar!!.i && it.major == '_'}
             if(nextGMChar != null) onGMCharSelected(nextGMChar)

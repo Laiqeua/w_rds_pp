@@ -1,5 +1,7 @@
 package com.example.w_rds_pp
 
+import android.app.Activity
+import android.content.Context
 import android.content.SharedPreferences
 import java.lang.Double.max
 import java.lang.Double.min
@@ -12,14 +14,14 @@ interface GameState {
     val selectedGMChar: GMChar?
 
     fun serialize(): String = GsonInstance.toJson(this)
-    fun isCompleted(): Boolean = gmStr.map { it.major }.joinToString("") == originalText
+    fun isCompleted(): Boolean = gmStr.map { it.major }.joinToString("") == originalText.uppercase()
 
     companion object {
         fun new(text: String, difficulty: Double = 0.5, alphabet: List<Char> = Alphabets.EN): GameState {
             val normalizedText = text.uppercase()
             val (major, lettersToGuess) = GameState.createMajorText(normalizedText, difficulty, alphabet)
             val minor = GameState.createMinorText(normalizedText, alphabet)
-            return GameStateImpl(normalizedText, GMStrHelper.fromStr(major, minor), lettersToGuess, emptySet(), null)
+            return GameStateImpl(text, GMStrHelper.fromStr(major, minor), lettersToGuess, emptySet(), null)
         }
 
         fun deserializeGameState(s: String): GameState = GsonInstance.fromJson(s, GameStateImpl::class.java)
@@ -88,3 +90,11 @@ class MGS_AutoSaveToSystemPreferences(
         fun GameState.saveToPrefNow(prefKey: String, pref: SharedPreferences) = pref.edit().putString(prefKey, serialize()).commit()
     }
 }
+
+fun readGlobalGameStateFromSharedPreferences(pref: SharedPreferences): GameState? =
+    GameState.readImmutableGSFromPref(CURRENT_GAME_STATE_PREF_KEY, pref)
+
+fun readGlobalGameStateFromSharedPreferences(activity: Activity): GameState? =
+    readGlobalGameStateFromSharedPreferences(activity.getSharedPreferences(GAME_SATE_PREF_NAME, Context.MODE_PRIVATE))
+
+

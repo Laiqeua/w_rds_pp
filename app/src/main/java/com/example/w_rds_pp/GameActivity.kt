@@ -1,10 +1,8 @@
 package com.example.w_rds_pp
 
-import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentContainerView
-import com.example.w_rds_pp.MGS_AutoSaveToSystemPreferences.Companion.saveToPref
 
 class GameActivity : AppCompatActivity() {
     private lateinit var gameFragment: GameFragment
@@ -22,8 +20,10 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun onPuzzleCompeted() {
-        val pref = getSharedPreferences(GAME_SATE_PREF_NAME, Activity.MODE_PRIVATE)
-        val gs = GameState.deserializeGameState(pref.getString(CURRENT_GAME_STATE_PREF_KEY, "")!!)
+        val gs = readGlobalGameStateFromSharedPreferences(this) ?: run {
+            Log.e(TAG, "onPuzzleCompeted: gs is null")
+            return
+        }
         val congratulationFragment = CongratulationFragment.newInstance(gs.originalText)
         supportFragmentManager
             .beginTransaction()
@@ -32,4 +32,7 @@ class GameActivity : AppCompatActivity() {
             .commit()
     }
 
+    companion object {
+        val TAG = GameActivity::class.qualifiedName
+    }
 }

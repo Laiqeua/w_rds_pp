@@ -21,20 +21,12 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
     var animationScope: CoroutineScope? = null
 
     var keyboardSpecification: KeyboardSpecification = KeyboardSpecifications.QWERTY
-    set(value) {
-        field = value
-        invalidate()
-    }
+        set(value) { field = value; invalidate() }
 
     var disabledKeys: Set<Char> = emptySet()
-    set(value) {
-        field = value
-        invalidate()
-    }
+        set(value) { field = value; invalidate() }
 
-    var onClick: (Char) -> Unit = { c ->
-        Log.d(TAG, "onClick(default): c = $c")
-    }
+    var onClick: (Char) -> Unit = { Log.d(TAG, "onClick(default): c = $it") }
 
     private class PaintGroup {
         val bg: Paint = Paint()
@@ -58,11 +50,9 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
     private val animationEndColor = 200
     private val animationStepTimeMilliSec = 5L
 
-    // todo maybe java has some better map than hashmap if key is sth like char
     private val animations: MutableMap<Char, PaintGroup> = Hashtable()
 
     init {
-        // todo why is intellij not showing color picker ?
         disabledKeyPG.bg.color = Color.rgb(220, 220, 220)
         keyPG.bg.color = Color.rgb(180, 180, 180)
 

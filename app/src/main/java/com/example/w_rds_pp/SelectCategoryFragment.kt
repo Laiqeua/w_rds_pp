@@ -12,7 +12,6 @@ import android.widget.LinearLayout
 
 
 class SelectCategoryFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private lateinit var categories: List<String>
 
     /** null means all categories **/
@@ -53,7 +52,7 @@ class SelectCategoryFragment : Fragment() {
     }
 
     companion object {
-        private const val CATEGORIES_BUNDLE_NAME = "cat"
+        const val CATEGORIES_BUNDLE_NAME = "cat"
         @JvmStatic
         fun newInstance(categories: List<String>) =
             SelectCategoryFragment().apply {

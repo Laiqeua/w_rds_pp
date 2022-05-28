@@ -80,7 +80,8 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
-        drawText(canvas!!)
+        canvas ?: return
+        drawText(canvas)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -100,7 +101,7 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             val y = event.y
             Log.d(TAG, "onTouchEvent: ACTION DOWN, x: ${x}, y: ${y}")
             val boxes = boxes.filter { it.rectangle.isInside(x, y) }
-            if(boxes.size == 0) {
+            if(boxes.isEmpty()) {
                 Log.d(TAG, "onTouchEvent: 0 matching")
                 return true
             } else if(boxes.size > 1) {

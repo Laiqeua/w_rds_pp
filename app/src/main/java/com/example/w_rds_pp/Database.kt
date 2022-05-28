@@ -1,5 +1,6 @@
 package com.example.w_rds_pp
 
+import android.content.Context
 import androidx.room.*
 
 @Entity
@@ -32,4 +33,17 @@ interface QuoteDao {
 @Database(entities = [Quote::class], version = 1, exportSchema = true)
 abstract class AppsDatabase : RoomDatabase() {
     abstract fun quoteDao(): QuoteDao
+    companion object {
+        private var OBJ: AppsDatabase? = null
+        fun instance(context: Context): AppsDatabase {
+            if(OBJ != null) return OBJ!!
+            synchronized(this) {
+                if(OBJ != null) return OBJ!!
+                OBJ = Room.databaseBuilder(context, AppsDatabase::class.java, "AppsDatabase1")
+                          .createFromAsset("populated_db.db")
+                          .build()
+                return OBJ!!
+            }
+        }
+    }
 }
