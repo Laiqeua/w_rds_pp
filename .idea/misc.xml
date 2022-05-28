@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.25364583333333335" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.24427083333333333" />
+        <entry key="app/src/main/res/drawable/ic_w_rds_app.xml" value="0.10520833333333333" />
         <entry key="app/src/main/res/layout/activity_game.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.14270833333333333" />
         <entry key="app/src/main/res/layout/content_new_game_creator.xml" value="0.2713541666666667" />
@@ -15,6 +17,7 @@
         <entry key="app/src/main/res/layout/fragment_select_difficulty.xml" value="0.2713541666666667" />
         <entry key="app/src/main/res/layout/fragment_text.xml" value="0.1" />
         <entry key="app/src/main/res/layout/select_category__category_button_template.xml" value="0.15555555555555556" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.24427083333333333" />
       </map>
     </option>
   </component>
