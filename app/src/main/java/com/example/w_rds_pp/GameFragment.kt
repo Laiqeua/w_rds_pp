@@ -30,6 +30,8 @@ class GameFragment : Fragment() {
             gs.gmStr = value
         }
 
+    var onPuzzleCompleted: () -> Unit = {}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -113,7 +115,7 @@ class GameFragment : Fragment() {
 
     private fun checkForCompletion() {
         if(gs.isCompleted()) {
-            Toast.makeText(requireContext(), "Completed", Toast.LENGTH_LONG).show()
+            onPuzzleCompleted()
         }
     }
 
