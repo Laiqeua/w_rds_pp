@@ -1,35 +1,30 @@
 package com.example.w_rds_pp
 
-import android.app.Instrumentation.ActivityResult
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
-import androidx.activity.result.contract.ActivityResultContract
-import androidx.lifecycle.lifecycleScope
-import androidx.room.Room
-import com.example.w_rds_pp.MGS_AutoSaveToSystemPreferences.Companion.saveToPrefNow
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
+// todo back button
 
 class MainActivity : AppCompatActivity() {
     private lateinit var newGameBtn: Button
     private lateinit var continueGameBtn: Button
 
-    private lateinit var db: DataBase
-
     private lateinit var pref: SharedPreferences
+
+    private val newGameCreator = registerForActivityResult(NewGameCreatorActivityResultContract()) {
+        if(it == NewGameCreatorActivity.NEW_GAME_HAS_BEEN_CREATED)
+            onNewGameCreated()
+        else onFailedToCreateNewGame(it)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        db = Room.databaseBuilder(applicationContext, DataBase::class.java, "words_app_db")
-            .createFromAsset("populated_db.db")
-            .build()
 
         pref = getSharedPreferences(GAME_SATE_PREF_NAME, Context.MODE_PRIVATE)
 
@@ -49,14 +44,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun continueGame() = if (isThereOngoingGame()) startGame() else newGame()
 
-    private fun newGame() = lifecycleScope.launch(Dispatchers.IO) {
-        val newQuote: Quote = db.quoteDao().findRandom() ?: run {
-            Log.d(TAG, "newGame: populate db !")
-            return@launch
-        }
-        val GS = GameStateHelper.new(newQuote.quote)
-        GS.saveToPrefNow(CURRENT_GAME_STATE_PREF_KEY, pref)
-        startGame()
+    private fun newGame() = newGameCreator.launch(null)
+
+    private fun onNewGameCreated() = startGame()
+    private fun onFailedToCreateNewGame(code: Int) {
+        Toast.makeText(applicationContext, "Error while creating new game", Toast.LENGTH_LONG).show()
     }
 
     private fun startGame() {
