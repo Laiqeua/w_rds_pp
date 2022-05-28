@@ -9,10 +9,11 @@
         tools:context=".MainActivity">
 
     <ImageView
+        android:adjustViewBounds="true"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_w_rds_app"
+        android:src="@drawable/logo"
         android:contentDescription="words app" />
 
     <LinearLayout
