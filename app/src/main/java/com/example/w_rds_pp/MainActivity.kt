@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.w_rds_pp.GameStateHelper.isCompleted
 
 // todo back button
 
@@ -59,7 +58,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun isThereOngoingGame(): Boolean {
         if(!pref.contains(CURRENT_GAME_STATE_PREF_KEY)) return false
-        return !GameStateHelper.deserializeGameState(pref.getString(CURRENT_GAME_STATE_PREF_KEY, "")!!).isCompleted()
+        return !GameState.deserializeGameState(pref.getString(CURRENT_GAME_STATE_PREF_KEY, "")!!).isCompleted()
     }
 
     private fun refreshContinueBtnVisibility() {

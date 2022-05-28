@@ -23,7 +23,7 @@ class GameActivity : AppCompatActivity() {
 
     private fun onPuzzleCompeted() {
         val pref = getSharedPreferences(GAME_SATE_PREF_NAME, Activity.MODE_PRIVATE)
-        val gs = GameStateHelper.deserializeGameState(pref.getString(CURRENT_GAME_STATE_PREF_KEY, "")!!)
+        val gs = GameState.deserializeGameState(pref.getString(CURRENT_GAME_STATE_PREF_KEY, "")!!)
         val congratulationFragment = CongratulationFragment.newInstance(gs.originalText)
         supportFragmentManager
             .beginTransaction()

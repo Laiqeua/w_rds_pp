@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.example.w_rds_pp.GameStateHelper.isCompleted
 
 // todo try to remove !!s
 
