@@ -32,6 +32,8 @@ object GMStrHelper {
 
 
 class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+    // todo optimization processedText may be computed to many time
+
     var gm: GMStr = GMStrHelper.fromStr("_p_ _p_ _ q_ e_r__", "aqb cqa h ph rhegt")
         set(value) {
             field = value
@@ -79,6 +81,17 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
         drawText(canvas!!)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val height = computeHeight(width)
+        setMeasuredDimension(width, height)
+    }
+
+    private fun computeHeight(width: Int): Int {
+        val m = computeMeasurements(width)
+        return ((m.processedText.size + 2) * m.deltaY).toInt()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -130,32 +143,25 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private fun drawText(canvas: Canvas) {
-        val maxNCharsInLine: Int = (canvas.width - xMargin - xMargin) / (majorLetterSize + charSpace)
-
-        val processedText: List<List<GMStr>> = processText(gm, maxNCharsInLine)
-
-        val deltaY = lineSpacing + majorLetterSize + minorLetterSize + majorMinorYSpace
+        val m = computeMeasurements(canvas.width)
 
         var x = xMargin.toFloat()
-        var y = deltaY.toFloat()
-
-        val deltaX = majorLetterSize + charSpace
+        var y = m.deltaY
 
         val boxes = mutableListOf<Box>()
-
-        for(line in processedText) {
+        for(line in m.processedText) {
             for(word in line) {
                 for(gmChar in word) {
                     val p = if(toBeHighlightedByMinor.contains(gmChar.minor)) majorHLPaint else majorPaint
                     canvas.printCharacter(gmChar.major, x, y, p)
                     canvas.printCharacter(gmChar.minor, x, y + majorLetterSize + majorMinorYSpace, minorPaint)
-                    boxes.add(Box(gmChar, RectF(x, y - majorLetterSize, x + majorLetterSize, y + deltaY - lineSpacing)))
-                    x += deltaX
+                    boxes.add(Box(gmChar, RectF(x, y - majorLetterSize, x + majorLetterSize, y + m.deltaY - lineSpacing)))
+                    x += m.deltaX
                 }
-                x += deltaX
+                x += m.deltaX
             }
             x = xMargin.toFloat()
-            y += deltaY
+            y += m.deltaY
         }
 
         this.boxes = boxes
@@ -168,7 +174,23 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         drawText(charArrayOf(c), 0, 1, x + additionalMargin, y, paint)
     }
 
+    private fun computeMeasurements(width: Int): Measurements {
+        val maxNCharsInLine: Int = (width - xMargin - xMargin) / (majorLetterSize + charSpace)
+        val processedText: List<List<GMStr>> = processText(gm, maxNCharsInLine)
+        val deltaY: Float = (lineSpacing + majorLetterSize + minorLetterSize + majorMinorYSpace).toFloat()
+        val deltaX: Float = (majorLetterSize + charSpace).toFloat()
+
+        return Measurements(maxNCharsInLine, processedText, deltaY, deltaX)
+    }
+
     private data class Box(val gmChar: GMChar, val rectangle: RectF)
+
+    private data class Measurements(
+        val maxNCharsInLine: Int,
+        val processedText: List<List<GMStr>>,
+        val deltaY: Float,
+        val deltaX: Float
+    )
 
     companion object {
         val TAG: String = GMView::class.java.name
