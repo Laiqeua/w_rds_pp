@@ -33,6 +33,14 @@ class NewGameCreatorActivity : AppCompatActivity() {
     private lateinit var catFragment: SelectCategoryFragment
     private lateinit var diffFragment: SelectDifficultyFragment
 
+    override fun onBackPressed() {
+        finishActivity(BACK_BTN)
+        val intent = Intent(this, MainActivity::class.java)
+        // FLAG_ACTIVITY_CLEAR_TOP should make it launch running activity
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         db = AppsDatabase.instance(applicationContext)
@@ -87,6 +95,7 @@ class NewGameCreatorActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val NEW_GAME_HAS_BEEN_CREATED = 0
+        const val NEW_GAME_HAS_BEEN_CREATED = 123
+        const val BACK_BTN = 321
     }
 }
