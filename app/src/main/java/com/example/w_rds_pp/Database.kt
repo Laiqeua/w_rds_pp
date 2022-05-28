@@ -19,3 +19,7 @@ interface QuoteDao {
     fun insertOrUpdate(quote: Quote): Long
 }
 
+@Database(entities = [Quote::class], version = 1, exportSchema = true)
+abstract class DataBase : RoomDatabase() {
+    abstract fun quoteDao(): QuoteDao
+}
