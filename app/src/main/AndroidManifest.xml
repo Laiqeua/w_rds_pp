@@ -9,11 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.W_rds_pp" >
-<!--        <activity-->
-<!--            android:name=".GameActivity"-->
-<!--            android:exported="true"-->
-<!--            android:label="@string/title_activity_game"-->
-<!--            android:theme="@style/Theme.W_rds_pp.NoActionBar" />-->
+        <activity
+            android:name=".GameActivity"
+            android:exported="true"
+            android:label="@string/title_activity_game"
+            android:theme="@style/Theme.W_rds_pp.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true" >

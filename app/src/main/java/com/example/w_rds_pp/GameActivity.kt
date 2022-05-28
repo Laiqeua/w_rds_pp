@@ -13,15 +13,7 @@ class GameActivity : AppCompatActivity() {
         setContentView(R.layout.activity_game)
         fragmentContainerView = findViewById(R.id.fragment_container)
 
-        val prefKey = "game 444"
-
-        val gs = GameStateHelper.new(
-            "Why, dear boy, we don't send wizards to Azkaban just for blowing up their aunts."
-        )
-        val pref = getSharedPreferences(GAME_SATE_PREF_NAME, MODE_PRIVATE)
-        gs.saveToPref(prefKey, pref)
-
-        val fragment = GameFragment.newInstance(prefKey)
+        val fragment = GameFragment.newInstance(CURRENT_GAME_STATE_PREF_KEY)
 
         supportFragmentManager
             .beginTransaction()
