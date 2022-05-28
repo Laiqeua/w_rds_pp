@@ -12,8 +12,9 @@
         <!-- todo ScrollView height -->
         <ScrollView
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/keyboard_view"
             android:layout_width="match_parent"
-            android:layout_height="400dp">
+            android:layout_height="0dp">
             <com.example.w_rds_pp.GMView
                 android:id="@+id/gm_view"
                 android:layout_width="match_parent"
@@ -24,13 +25,8 @@
                 android:id="@+id/keyboard_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/space_under_keyboard"/>
-
-        <Space
-                android:id="@+id/space_under_keyboard"
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
                 app:layout_constraintBottom_toTopOf="@id/control_box"/>
+
 
         <LinearLayout
                 android:id="@+id/control_box"
