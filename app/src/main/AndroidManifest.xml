@@ -15,7 +15,7 @@
 <!--            android:label="@string/title_activity_game"-->
 <!--            android:theme="@style/Theme.W_rds_pp.NoActionBar" />-->
         <activity
-            android:name=".GameActivity"
+            android:name=".MainActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
