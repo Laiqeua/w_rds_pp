@@ -12,11 +12,12 @@ import android.view.View
 import kotlin.math.min
 
 data class GMChar(
+    val i: Int,
     val major: Char,
     val minor: Char
 ){
-    fun withMinor(c: Char) = GMChar(major, c)
-    fun withMajor(c: Char) = GMChar(c, minor)
+    fun withMinor(c: Char) = GMChar(i, major, c)
+    fun withMajor(c: Char) = GMChar(i, c, minor)
 }
 
 typealias GMStr = List<GMChar>
@@ -25,7 +26,7 @@ object GMStrHelper {
         val n = min(major.length, minor.length)
         val majorStr = major.substring(0, n)
         val minorStr = minor.substring(0, n)
-        return majorStr.zip(minorStr).map { GMChar(it.first, it.second) }
+        return majorStr.zip(minorStr).mapIndexed { i, it -> GMChar(i, it.first, it.second) }
     }
 }
 
