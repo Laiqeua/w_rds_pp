@@ -77,7 +77,7 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
         val width = MeasureSpec.getSize(widthMeasureSpec)
         val m = computeMeasures(width)
 
-        val desiredHeight = keyboardSpecification.size * (m.betweenKeysSpace + m.keyHeight) + m.betweenKeysSpace
+        val desiredHeight = 2 * m.margin + keyboardSpecification.size * (m.betweenKeysSpace + m.keyHeight)
         setMeasuredDimension(widthMeasureSpec, desiredHeight.toInt())
     }
 
