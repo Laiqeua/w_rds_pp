@@ -114,15 +114,9 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private fun processText(text: GMStr, maxCharactersInLine: Int) : List<List<GMStr>> {
-        fun splitWordIntoWords(word: GMStr): List<GMStr> =
-            if(word.size > maxCharactersInLine)
-                (listOf(word.subList(0, maxCharactersInLine))
-                        + splitWordIntoWords(word.subList(maxCharactersInLine, word.size)))
-            else listOf(word)
-
         val words = text
             .split { p -> p.major == ' ' }
-            .flatMap { splitWordIntoWords(it) }
+            .flatMap { it.partition(maxCharactersInLine) }
 
         val lines = mutableListOf<List<GMStr>>()
 

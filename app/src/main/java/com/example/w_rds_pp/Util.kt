@@ -66,3 +66,8 @@ fun Paint.measureCharHeight(c: Char): Int  {
     val bounds = getTextBounds(String(charArrayOf(c)))
     return abs(bounds.top - bounds.bottom)
 }
+
+fun <T> List<T>.partition(maxSize: Int): List<List<T>> =
+    if(size > maxSize)
+        listOf(subList(0, maxSize)) + subList(maxSize, size).partition(maxSize)
+    else listOf(this)
