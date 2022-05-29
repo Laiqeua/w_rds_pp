@@ -37,11 +37,12 @@ data class GMTheme(
     val xMargin: Float = 77f,
     val majorMinorYSpace: Float = 2f,
     val charSpace: Float = 6f,
-    val majorCharColor: Int = Color.BLACK,
+    val majorCharColor: Int = Color.rgb(130, 130, 130),
     val minorCharColor: Int = Color.BLUE,
     val majorDefaultHLCharColor: Int = Color.RED,
     val majorHLCharColors: Map<GMHighlightCategoryID, Int> = mapOf(
-        GMHLDefCatID.CURRENT to Color.RED
+        GMHLDefCatID.CURRENT to Color.RED,
+        GMHLDefCatID.SET_FIXED to Color.BLACK
     ),
 )
 
@@ -49,6 +50,7 @@ typealias GMHighlightCategoryID = String
 
 object GMHLDefCatID {
     const val CURRENT: String = "current"
+    const val SET_FIXED: String = "fixed"
 }
 
 class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {

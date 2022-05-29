@@ -69,6 +69,7 @@ class GameFragment : Fragment() {
         keyboardView.animationScope = lifecycleScope
 
         updateTimerView()
+        setFixedLetterOnGMView()
 
         return v
     }
@@ -155,6 +156,13 @@ class GameFragment : Fragment() {
 
     private fun updateTimerView(){
         timerView.text = timerFormatter(gs.howLongIsBeingSolvedSec)
+    }
+
+    private fun setFixedLetterOnGMView() {
+        val fixedCharIndexes = gm
+            .filter { it.major != '_' && !gs.lettersToGuess.contains(it.major) }
+            .map { it.i }.toSet()
+        gmView.changeHLIdWithCriteria(GMHLDefCatID.SET_FIXED) { fixedCharIndexes.contains(it.i) }
     }
 
     companion object {
