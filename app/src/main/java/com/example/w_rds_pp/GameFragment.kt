@@ -6,10 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 
 // todo try to remove !!s
@@ -94,10 +91,12 @@ class GameFragment : Fragment() {
     private fun onGMCharSelected(gmChar: GMChar) {
         if(gmChar.major == '_' || gs.lettersToGuess.contains(gmChar.major)){
             gs.selectedGMChar = gmChar
-            gmView.toBeHighlightedByMinor = setOf(gmChar.minor)
+            gmView.hlIdWithCriteria[GMHLDefCatID.CURRENT] = { c -> c.minor == gmChar.minor }
+            gmView.invalidate()
         } else {
             gs.selectedGMChar = null
-            gmView.toBeHighlightedByMinor = emptySet()
+            gmView.hlIdWithCriteria[GMHLDefCatID.CURRENT] = { false }
+            gmView.invalidate()
         }
     }
 

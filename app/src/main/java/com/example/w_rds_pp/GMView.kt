@@ -39,8 +39,18 @@ data class GMTheme(
     val charSpace: Float = 6f,
     val majorCharColor: Int = Color.BLACK,
     val minorCharColor: Int = Color.BLUE,
-    val majorHLCharColor: Int = Color.RED
+    val majorDefaultHLCharColor: Int = Color.RED,
+    val majorHLCharColors: Map<GMHighlightCategoryID, Int> = mapOf(
+
+    ),
 )
+
+typealias GMHighlightCategoryID = String
+
+object GMHLDefCatID {
+    // really, I'm doing magical values after experience with opengl xd
+    val CURRENT: String = "current"
+}
 
 class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     // todo optimization processedText may be computed to many time
@@ -58,11 +68,8 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             invalidate()
         }
 
-    var toBeHighlightedByMinor: Set<Char> = setOf()
-        set(value) {
-            field = value
-            invalidate()
-        }
+    /** you may want to invalidate gm view after you change map**/
+    val hlIdWithCriteria: MutableMap<GMHighlightCategoryID, (GMChar) -> Boolean> = mutableMapOf()
 
     var onLetterSelected: (GMChar) -> Unit = { Log.d(TAG, "onLetterSelected: ds=${it}") }
 
@@ -150,7 +157,8 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         for(line in m.processedText) {
             for(word in line) {
                 for(gmChar in word) {
-                    val p = if(toBeHighlightedByMinor.contains(gmChar.minor)) majorHLPaint else majorPaint
+                    val hlCriteria = hlIdWithCriteria.toList().filter { (_, f) -> f(gmChar) }
+                    val p = if (hlCriteria.isNotEmpty()) createHLPaint(hlCriteria[0].first) else majorPaint
                     canvas.printCharacter(gmChar.major, x, y, p)
                     canvas.printCharacter(gmChar.minor, x, y + tm.majorCharWidth + tm.majorMinorYSpace, minorPaint)
                     boxes.add(Box(gmChar, RectF(x, y - tm.majorCharWidth, x + tm.majorCharWidth, y + m.deltaY - tm.lineSpacing)))
@@ -190,8 +198,14 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         majorPaint.color = tm.majorCharColor
 
         majorHLPaint.textSize = majorTextSize
-        majorHLPaint.color = tm.majorHLCharColor
+        majorHLPaint.color = tm.majorDefaultHLCharColor
     }
+
+    private fun createHLPaint(hlId: GMHighlightCategoryID): Paint =
+        Paint().apply {
+            textSize = findFontSize(tm.majorCharWidth, FindFontSize.WIDTH)
+            color = tm.majorHLCharColors.getOrDefault(hlId, tm.majorDefaultHLCharColor)
+        }
 
     private data class Box(val gmChar: GMChar, val rectangle: RectF)
 
