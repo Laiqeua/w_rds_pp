@@ -31,15 +31,15 @@ object GMStrHelper {
 }
 
 data class GMTheme(
-    val majorLetterFontSize: Float = 60f,
-    val minorLetterFontSize: Float = 40f,
+    val majorCharWidth: Float = 60f,
+    val minorCharWidth: Float = 40f,
     val lineSpacing: Float = 50f,
     val xMargin: Float = 77f,
     val majorMinorYSpace: Float = 2f,
     val charSpace: Float = 6f,
-    val majorLetterTextColor: Int = Color.BLACK,
-    val minorLetterTextColor: Int = Color.BLUE,
-    val majorLetterHLTextColor: Int = Color.RED
+    val majorCharColor: Int = Color.BLACK,
+    val minorCharColor: Int = Color.BLUE,
+    val majorHLCharColor: Int = Color.RED
 )
 
 class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
@@ -152,8 +152,8 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
                 for(gmChar in word) {
                     val p = if(toBeHighlightedByMinor.contains(gmChar.minor)) majorHLPaint else majorPaint
                     canvas.printCharacter(gmChar.major, x, y, p)
-                    canvas.printCharacter(gmChar.minor, x, y + tm.majorLetterFontSize + tm.majorMinorYSpace, minorPaint)
-                    boxes.add(Box(gmChar, RectF(x, y - tm.majorLetterFontSize, x + tm.majorLetterFontSize, y + m.deltaY - tm.lineSpacing)))
+                    canvas.printCharacter(gmChar.minor, x, y + tm.majorCharWidth + tm.majorMinorYSpace, minorPaint)
+                    boxes.add(Box(gmChar, RectF(x, y - tm.majorCharWidth, x + tm.majorCharWidth, y + m.deltaY - tm.lineSpacing)))
                     x += m.deltaX
                 }
                 x += m.deltaX
@@ -169,10 +169,10 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         if(cachedComputationsDependencies?.eq(width, this) == true && cachedComputations != null)
             return cachedComputations!!
 
-        val maxNCharsInLine: Int = ((width - tm.xMargin - tm.xMargin) / (tm.majorLetterFontSize + tm.charSpace)).toInt()
+        val maxNCharsInLine: Int = ((width - tm.xMargin - tm.xMargin) / (tm.majorCharWidth + tm.charSpace)).toInt()
         val processedText: List<List<GMStr>> = processText(gm, maxNCharsInLine)
-        val deltaY: Float = tm.lineSpacing + tm.majorLetterFontSize + tm.minorLetterFontSize + tm.majorMinorYSpace
-        val deltaX: Float = tm.majorLetterFontSize + tm.charSpace
+        val deltaY: Float = tm.lineSpacing + tm.majorCharWidth + tm.minorCharWidth + tm.majorMinorYSpace
+        val deltaX: Float = tm.majorCharWidth + tm.charSpace
 
         val computations = Computations(maxNCharsInLine, processedText, deltaY, deltaX)
         cachedComputations = computations
@@ -182,14 +182,14 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private fun applyTheme() {
-        minorPaint.textSize = tm.minorLetterFontSize
-        minorPaint.color = tm.minorLetterTextColor
+        minorPaint.textSize = tm.minorCharWidth
+        minorPaint.color = tm.minorCharColor
 
-        majorPaint.textSize = tm.majorLetterFontSize
-        majorPaint.color = tm.majorLetterTextColor
+        majorPaint.textSize = tm.majorCharWidth
+        majorPaint.color = tm.majorCharColor
 
-        majorHLPaint.textSize = tm.majorLetterFontSize
-        majorHLPaint.color = tm.majorLetterHLTextColor
+        majorHLPaint.textSize = tm.majorCharWidth
+        majorHLPaint.color = tm.majorHLCharColor
     }
 
     private data class Box(val gmChar: GMChar, val rectangle: RectF)
