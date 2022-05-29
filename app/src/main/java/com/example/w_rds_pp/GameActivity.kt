@@ -27,8 +27,8 @@ class GameActivity : AppCompatActivity() {
         val congratulationFragment = CongratulationFragment.newInstance(gs.originalText)
         supportFragmentManager
             .beginTransaction()
-            .remove(gameFragment)
-            .add(R.id.fragment_container, congratulationFragment)
+            .setCustomAnimations(R.anim.enter, R.anim.exit)
+            .replace(R.id.fragment_container, congratulationFragment)
             .commit()
     }
 

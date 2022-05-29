@@ -69,8 +69,8 @@ class NewGameCreatorActivity : AppCompatActivity() {
         diffFragment.onDifficultySelected = ::onDifficultySelected
         supportFragmentManager
             .beginTransaction()
-            .remove(catFragment)
-            .add(R.id.fragment_container_view, diffFragment)
+            .setCustomAnimations(R.anim.enter, R.anim.exit)
+            .replace(R.id.fragment_container_view, diffFragment)
             .commit()
     }
 
