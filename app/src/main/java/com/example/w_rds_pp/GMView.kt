@@ -37,7 +37,7 @@ data class GMTheme(
     val xMargin: Float = 77f,
     val majorMinorYSpace: Float = 2f,
     val charSpace: Float = 6f,
-    val majorCharColor: Int = Color.rgb(130, 130, 130),
+    val majorCharColor: Int = Color.rgb(110, 110, 110),
     val minorCharColor: Int = Color.BLUE,
     val majorDefaultHLCharColor: Int = Color.RED,
     val majorHLCharColors: Map<GMHighlightCategoryID, Int> = mapOf(
