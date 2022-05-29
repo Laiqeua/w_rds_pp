@@ -65,7 +65,7 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         // todo it may be improved
         val width = MeasureSpec.getSize(widthMeasureSpec)
-        val m = computeMeasures(width)
+        val m = computeForWidth(width)
 
         val desiredHeight = 2 * m.margin + keyboardSpecification.size * (m.betweenKeysSpace + m.keyHeight)
         setMeasuredDimension(widthMeasureSpec, desiredHeight.toInt())
@@ -97,10 +97,10 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
         canvas?.run { drawKeyboard(canvas) }
     }
 
-    data class Measurements(val margin: Float, val kw: Float, val betweenKeysSpace: Float,
-                            val maxNOfKeysInRow: Int, val keyWidth: Float, val keyHeight: Float)
+    private data class Computations(val margin: Float, val kw: Float, val betweenKeysSpace: Float,
+                                    val maxNOfKeysInRow: Int, val keyWidth: Float, val keyHeight: Float)
 
-    private fun computeMeasures(width: Int): Measurements {
+    private fun computeForWidth(width: Int): Computations {
         val margin = width * marginToWidth
         val kw: Float = width - (2 * margin)
         val betweenKeysSpace: Float = kw * spaceBetweenKeysToWidth
@@ -109,11 +109,11 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
 
         val keyWidth = (kw - ((betweenKeysSpace - 1) * maxNOfKeysInRow)) / maxNOfKeysInRow
         val keyHeight: Float = keyWidth * keyHeightToItsWidth
-        return Measurements(margin, kw, betweenKeysSpace, maxNOfKeysInRow, keyWidth, keyHeight)
+        return Computations(margin, kw, betweenKeysSpace, maxNOfKeysInRow, keyWidth, keyHeight)
     }
 
     private fun drawKeyboard(canvas: Canvas) {
-        val m = computeMeasures(canvas.width)
+        val m = computeForWidth(canvas.width)
         adjustFontSize(m.keyWidth * keyTextSizeToKeySize, m.keyHeight * keyTextSizeToKeySize)
 
         val boxes: MutableList<Pair<Char, RectF>> = mutableListOf()
@@ -169,7 +169,6 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
     }
 
     private fun startAnimationForKey(c: Char) {
-
         if(animations.contains(c)) return
         animations[c] = createAnimationPaintGroup()
         animationScope?.launch {
