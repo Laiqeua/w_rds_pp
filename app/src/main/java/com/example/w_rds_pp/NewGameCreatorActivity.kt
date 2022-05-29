@@ -51,7 +51,7 @@ class NewGameCreatorActivity : AppCompatActivity() {
 
     private fun obtainQuote() = lifecycleScope.launch(Dispatchers.IO) {
         quote = (if(category == null) db.quoteDao().findRandom() else db.quoteDao().findRandomWhereCategory(category!!))
-            ?: Quote(-1, "You forget to populate db", ":(")
+            ?: Quote(-1, "You forgot to populate db", ":(")
     }
 
     private fun runCategorySelector() = lifecycleScope.launch(Dispatchers.IO) {
