@@ -64,6 +64,9 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private var boxes: List<Box> = listOf()
 
+    private var cachedComputations: Computation? = null
+    private var cachedComputationsDependencies: ComputationDependencies? = null
+
     init {
         isFocusable = true
         isFocusableInTouchMode = true
@@ -91,7 +94,7 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private fun computeHeight(width: Int): Int {
-        val m = computeMeasurements(width)
+        val m = computeForWidth(width)
         return ((m.processedText.size + 1) * m.deltaY).toInt()
     }
 
@@ -138,7 +141,7 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private fun drawText(canvas: Canvas) {
-        val m = computeMeasurements(canvas.width)
+        val m = computeForWidth(canvas.width)
 
         var x = xMargin.toFloat()
         var y = m.deltaY
@@ -162,29 +165,36 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         this.boxes = boxes
     }
 
-    private fun Canvas.printCharacter(c: Char, x: Float, y: Float, paint: Paint) {
-        val wWidth = paint.measureCharWidth('W')
-        val cWidth = paint.measureCharWidth(c)
-        val additionalMargin: Float = if(wWidth > cWidth) { (wWidth - cWidth) / 2 } else 0f
-        drawText(charArrayOf(c), 0, 1, x + additionalMargin, y, paint)
-    }
+    private fun computeForWidth(width: Int): Computation {
+        if(cachedComputationsDependencies?.width == width
+            && cachedComputationsDependencies?.gmStr == gm
+            && cachedComputations != null)
+            return cachedComputations!!
 
-    private fun computeMeasurements(width: Int): Measurements {
         val maxNCharsInLine: Int = (width - xMargin - xMargin) / (majorLetterSize + charSpace)
         val processedText: List<List<GMStr>> = processText(gm, maxNCharsInLine)
         val deltaY: Float = (lineSpacing + majorLetterSize + minorLetterSize + majorMinorYSpace).toFloat()
         val deltaX: Float = (majorLetterSize + charSpace).toFloat()
 
-        return Measurements(maxNCharsInLine, processedText, deltaY, deltaX)
+        val computation = Computation(maxNCharsInLine, processedText, deltaY, deltaX)
+        cachedComputations = computation
+        cachedComputationsDependencies = ComputationDependencies(width, gm)
+
+        return computation
     }
 
     private data class Box(val gmChar: GMChar, val rectangle: RectF)
 
-    private data class Measurements(
+    private data class Computation(
         val maxNCharsInLine: Int,
         val processedText: List<List<GMStr>>,
         val deltaY: Float,
         val deltaX: Float
+    )
+
+    private data class ComputationDependencies(
+        val width: Int,
+        val gmStr: GMStr
     )
 
     companion object {

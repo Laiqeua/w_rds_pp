@@ -14,3 +14,15 @@ fun randomString(length: Int, charTable: Array<Char>): String {
     }
     return b.toString()
 }
+
+fun <T> randomLengthList(min: Int, until: Int, f: () -> T): List<T> {
+    val n = randomInstance.nextInt(min, until)
+    val list = mutableListOf<T>()
+    for(i in 1..n) {
+        list.add(f())
+    }
+    return list
+}
+
+fun randomIntList(min: Int, until: Int): List<Int> = randomLengthList(min, until) { randomInstance.nextInt() }
+

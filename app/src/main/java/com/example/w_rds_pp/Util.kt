@@ -1,5 +1,6 @@
 package com.example.w_rds_pp
 
+import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
@@ -71,3 +72,10 @@ fun <T> List<T>.partition(maxSize: Int): List<List<T>> =
     if(size > maxSize)
         listOf(subList(0, maxSize)) + subList(maxSize, size).partition(maxSize)
     else listOf(this)
+
+fun Canvas.printCharacter(c: Char, x: Float, y: Float, paint: Paint) {
+    val wWidth = paint.measureCharWidth('W')
+    val cWidth = paint.measureCharWidth(c)
+    val additionalMargin: Float = if(wWidth > cWidth) { (wWidth - cWidth) / 2 } else 0f
+    drawText(charArrayOf(c), 0, 1, x + additionalMargin, y, paint)
+}
