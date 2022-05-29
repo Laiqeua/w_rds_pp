@@ -92,7 +92,7 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private fun computeHeight(width: Int): Int {
         val m = computeMeasurements(width)
-        return ((m.processedText.size + 2) * m.deltaY).toInt()
+        return ((m.processedText.size + 1) * m.deltaY).toInt()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

@@ -9,9 +9,30 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textSize="40sp"
-        android:text="Select Category"/>
+        style="@style/SelectScreen_Header"
+        android:text="@string/select_category"/>
+
+    <LinearLayout
+        android:id="@+id/row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".18"/>
+        <Button
+            android:id="@+id/any_category_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".64"
+            style="@style/CategorySelection_CategoryButton_AllCategories"
+            android:text="@string/any"/>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".18"/>
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"

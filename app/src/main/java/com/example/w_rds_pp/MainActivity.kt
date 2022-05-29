@@ -62,7 +62,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshContinueBtnVisibility() {
-        continueGameBtn.visibility = (if(!isThereOngoingGame()) View.GONE else View.VISIBLE)
+//        continueGameBtn.visibility = (if(!isThereOngoingGame()) View.GONE else View.VISIBLE)
+        continueGameBtn.isEnabled = isThereOngoingGame()
     }
 
     companion object {

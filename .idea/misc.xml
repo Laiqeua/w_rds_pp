@@ -4,10 +4,22 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.25364583333333335" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.16180555555555556" />
+        <entry key="app/src/main/res/drawable/clear_background.xml" value="0.28703703703703703" />
+        <entry key="app/src/main/res/drawable/clear_foreground.xml" value="0.28703703703703703" />
+        <entry key="app/src/main/res/drawable/gradient_blue_magneta.xml" value="0.12962962962962962" />
+        <entry key="app/src/main/res/drawable/gradient_magneta_blue.xml" value="0.17777777777777778" />
+        <entry key="app/src/main/res/drawable/ic_congrats.xml" value="0.3074074074074074" />
+        <entry key="app/src/main/res/drawable/ic_icons8_close_384.xml" value="0.16180555555555556" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.24427083333333333" />
-        <entry key="app/src/main/res/drawable/ic_w_rds_app.xml" value="0.10520833333333333" />
+        <entry key="app/src/main/res/drawable/ic_w_rds_app.xml" value="1.0" />
+        <entry key="app/src/main/res/drawable/logo_like_bg.xml" value="0.12962962962962962" />
         <entry key="app/src/main/res/layout/activity_game.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_new_game_creator.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/category_selection_any_category_button_template.xml" value="0.2930253623188406" />
+        <entry key="app/src/main/res/layout/category_selection_category_button_template.xml" value="0.1612008072653885" />
+        <entry key="app/src/main/res/layout/category_selection_row_template.xml" value="0.1" />
         <entry key="app/src/main/res/layout/content_new_game_creator.xml" value="0.2713541666666667" />
         <entry key="app/src/main/res/layout/fragment_congratulation.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.2713541666666667" />
@@ -16,7 +28,10 @@
         <entry key="app/src/main/res/layout/fragment_select_category.xml" value="0.11024217961654895" />
         <entry key="app/src/main/res/layout/fragment_select_difficulty.xml" value="0.2713541666666667" />
         <entry key="app/src/main/res/layout/fragment_text.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/select_category__all_categories_button_template.xml" value="0.10185185185185185" />
         <entry key="app/src/main/res/layout/select_category__category_button_template.xml" value="0.15555555555555556" />
+        <entry key="app/src/main/res/layout/start_page_action_button_template.xml" value="0.1" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/clear.xml" value="0.16180555555555556" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.24427083333333333" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.19010416666666666" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/w_underline_icon.xml" value="0.19010416666666666" />

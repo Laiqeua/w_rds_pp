@@ -1,0 +1,44 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt"
+    android:viewportWidth="16.48283"
+    android:viewportHeight="14.68959"
+    android:width="58.40372dp"
+    android:height="52.04973dp">
+    <group
+        android:translateX="-3.09787"
+        android:translateY="-4.661228">
+        <group
+            android:scaleX="1.280916"
+            android:scaleY="1.237419"
+            android:translateX="103.9911"
+            android:translateY="-1219.365">
+            <path
+                android:pathData="M-72.695687 1000.9938c-1.972631 -0.2257 -3.790181 -1.49518 -4.687846 -3.27432 -0.175341 -0.34752 -0.468403 -1.12381 -0.468403 -1.24073 0 -0.0266 0.375731 -0.048 0.834956 -0.0476l0.834965 0.00072 0.163557 0.4041c0.519646 1.28389 1.615359 2.24396 2.994703 2.62398 0.49589 0.13662 1.63139 0.13421 2.144474 -0.005 0.522244 -0.14124 1.250991 -0.50448 1.653619 -0.82424 0.687488 -0.546 1.31115 -1.49718 1.539 -2.34722 0.146128 -0.54518 0.177544 -1.43846 0.07041 -2.00269 -0.178809 -0.94189 -0.54809 -1.63735 -1.241568 -2.33827 -0.844669 -0.85372 -1.728666 -1.24944 -2.900391 -1.29837 -0.550547 -0.023 -0.767325 -0.006 -1.18485 0.0941 -1.415428 0.33867 -2.632012 1.39775 -3.122259 2.71804l-0.103341 0.27832h-0.842765 -0.842766l0.03834 -0.16113c0.08466 -0.35604 0.444253 -1.16597 0.699534 -1.57555 0.354919 -0.56944 1.084444 -1.33426 1.637166 -1.71635 3.344531 -2.31207 7.975171 -0.83571 9.268415 2.95499 1.2168 3.56666 -1.256634 7.33132 -5.098284 7.75962 -0.62535 0.07 -0.754641 0.069 -1.386656 0z"
+                android:fillType="evenOdd"
+                android:fillColor="#000000" />
+            <group
+                android:scaleX="0.7757872"
+                android:scaleY="0.6117807"
+                android:translateX="-35.47719"
+                android:translateY="373.8311">
+                <path
+                    android:pathData="M-55.70521 1017.369H-51.25941V1018.535H-55.70521V1017.369Z"
+                    android:fillType="evenOdd"
+                    android:fillColor="#000000" />
+                <group
+                    android:rotation="-89.99999"
+                    android:scaleX="0.3575748"
+                    android:scaleY="0.3047184"
+                    android:translateX="-117.8285"
+                    android:translateY="1375.33">
+                    <group
+                        android:rotation="-84.29688">
+                        <path
+                            android:pathData="M-101.75708 1029.4917l-15.16173 1.2959 6.45861 -13.7784z"
+                            android:fillType="evenOdd"
+                            android:fillColor="#000000" />
+                    </group>
+                </group>
+            </group>
+        </group>
+    </group>
+</vector>

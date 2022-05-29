@@ -1,0 +1,29 @@
+<resources>
+    <style name="HomeScreenButton">
+        <item name="android:textSize">24sp</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="android:height">84dp</item>
+    </style>
+    <style name="CategorySelection_CategoryButton">
+        <item name="android:textSize">22sp</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:height">52dp</item>
+    </style>
+    <style name="CategorySelection_CategoryButton_AllCategories">
+        <item name="android:textSize">28sp</item>
+        <item name="cornerRadius">18dp</item>
+        <item name="android:height">62dp</item>
+        <item name="backgroundTint">@color/magenta</item>
+    </style>
+    <style name="DifficultySelection_Button">
+        <item name="android:textSize">28sp</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="android:height">82dp</item>
+    </style>
+    <style name="SelectScreen_Header">
+        <item name="android:textSize">50sp</item>
+        <item name="android:layout_marginTop">38dp</item>
+        <item name="android:layout_marginBottom">28dp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+</resources>

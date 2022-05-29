@@ -1,7 +1,7 @@
 package com.example.w_rds_pp
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -30,27 +30,24 @@ class SelectCategoryFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_select_category, container, false)
 
-        val allBtn = createCategoryButtonInstance("Any")
-        allBtn.setOnClickListener { onCategorySelected(null) }
-        allBtn.setBackgroundColor(Color.MAGENTA)
-        allBtn.textSize = 26f
-        val buttons: List<Button> = listOf(allBtn) + categories.map(::createCategoryButtonInstance)
+        v.findViewById<Button>(R.id.any_category_btn).setOnClickListener { onCategorySelected(null) }
 
         val catContainer: LinearLayout = v.findViewById(R.id.categories_container)
-        buttons.forEach { catContainer.addView(it) }
+        categories.map(::createRow)
+                  .forEach { catContainer.addView(it) }
 
-        // Inflate the layout for this fragment
         return v
     }
 
-    private fun createCategoryButtonInstance(categoryName: String): Button {
+    @SuppressLint("InflateParams")
+    private fun createRow(categoryName: String): View {
         val li: LayoutInflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val v = li.inflate(R.layout.select_category__category_button_template, null);
-        val templateButton: Button = v.findViewById(R.id.category_button_template)
-        return templateButton.apply {
-            text = categoryName
+        val v = li.inflate(R.layout.category_selection_row_template, null)
+        v.findViewById<Button>(R.id.category_button).apply {
             setOnClickListener { onCategorySelected(categoryName) }
+            text = categoryName
         }
+        return v.findViewById(R.id.row)
     }
 
     companion object {

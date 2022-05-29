@@ -21,7 +21,8 @@
             android:theme="@style/Theme.W_rds_pp.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.W_rds_pp.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -6,30 +6,33 @@
     android:orientation="vertical"
     tools:context=".CongratulationFragment">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30sp"
+        android:textAlignment="center"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_congrats"
+        android:textSize="60sp"
+        android:fontFamily="@font/caveat_variable_font_wght"
+        android:contentDescription="@string/congratulation"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
         android:textSize="50sp"
-        android:text="Congratulation"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="40sp"
-        android:textAlignment="center"
-        android:text="You successfully solved this puzzle"/>
-
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="30sp"/>
+        android:layout_marginHorizontal="30sp"
+        android:layout_marginVertical="30sp"
+        android:fontFamily="@font/caveat_variable_font_wght"
+        android:text="@string/you_successfully_solved_this_puzzle"/>
 
     <TextView
         android:id="@+id/quote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textSize="30sp"
+        android:layout_marginHorizontal="30sp"
+        android:textSize="40sp"
+        android:fontFamily="@font/caveat_variable_font_wght"
         tools:text="Why, dear boy, we don't send wizards to Azkaban just for blowing up their aunts."/>
 
 </LinearLayout>

@@ -6,28 +6,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/logo_like_bg"
         tools:context=".MainActivity">
 
-    <Space
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/top_space"
-        android:layout_width="match_parent"
-        android:layout_height="80sp"/>
-
     <TextView
-        app:layout_constraintTop_toBottomOf="@id/top_space"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:text="W ⎽⎽"
+        android:text="@string/w_underline"
         android:textSize="100sp" />
 
     <LinearLayout
-        app:layout_constraintBottom_toTopOf="@id/bottom_space"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="80dp"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,44 +31,40 @@
             <Space
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".25"/>
+                android:layout_weight=".18"/>
             <Button
                 android:id="@+id/new_game_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:text="NEW GAME"/>
+                android:layout_weight=".64"
+                style="@style/HomeScreenButton"
+                android:text="@string/new_game"/>
             <Space
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".25"/>
+                android:layout_weight=".18"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
             android:orientation="horizontal">
             <Space
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".25"/>
+                android:layout_weight=".18"/>
             <Button
                 android:id="@+id/continue_game_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:text="CONTINUE GAME"/>
+                android:layout_weight=".64"
+                style="@style/HomeScreenButton"
+                android:text="@string/continue_game"/>
             <Space
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".25"/>
+                android:layout_weight=".18"/>
         </LinearLayout>
     </LinearLayout>
-
-
-    <Space
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:id="@+id/bottom_space"
-        android:layout_width="match_parent"
-        android:layout_height="80sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

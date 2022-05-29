@@ -9,10 +9,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textSize="40sp"
-        android:text="Select Difficulty"/>
-
+        style="@style/SelectScreen_Header"
+        android:text="@string/select_difficulty"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,8 +24,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:textSize="26sp"
-            android:text="EASY"/>
+            style="@style/DifficultySelection_Button"
+            android:backgroundTint="@color/diff_easy"
+            android:text="@string/easy"/>
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -46,8 +45,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:textSize="26sp"
-            android:text="NORMAL"/>
+            style="@style/DifficultySelection_Button"
+            android:backgroundTint="@color/diff_normal"
+            android:text="@string/normal"/>
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -66,8 +66,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:textSize="26sp"
-            android:text="HARD"/>
+            style="@style/DifficultySelection_Button"
+            android:backgroundTint="@color/diff_hard"
+            android:text="@string/hard"/>
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -86,8 +87,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:textSize="26sp"
-            android:text="ULTRA"/>
+            style="@style/DifficultySelection_Button"
+            android:backgroundTint="@color/diff_ultra"
+            android:text="@string/ultra"/>
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
