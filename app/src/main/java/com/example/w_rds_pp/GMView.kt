@@ -202,6 +202,7 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private fun createHLPaint(hlId: GMHighlightCategoryID): Paint =
         Paint().apply {
+            isAntiAlias = true
             textSize = findFontSize(tm.majorCharWidth, FindFontSize.WIDTH)
             color = tm.majorHLCharColors.getOrDefault(hlId, tm.majorDefaultHLCharColor)
         }
