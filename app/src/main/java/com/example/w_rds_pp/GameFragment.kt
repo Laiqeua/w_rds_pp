@@ -91,12 +91,10 @@ class GameFragment : Fragment() {
     private fun onGMCharSelected(gmChar: GMChar) {
         if(gmChar.major == '_' || gs.lettersToGuess.contains(gmChar.major)){
             gs.selectedGMChar = gmChar
-            gmView.hlIdWithCriteria[GMHLDefCatID.CURRENT] = { c -> c.minor == gmChar.minor }
-            gmView.invalidate()
+            gmView.changeHLIdWithCriteria(GMHLDefCatID.CURRENT) { c -> c.minor == gmChar.minor }
         } else {
             gs.selectedGMChar = null
-            gmView.hlIdWithCriteria[GMHLDefCatID.CURRENT] = { false }
-            gmView.invalidate()
+            gmView.changeHLIdWithCriteria(GMHLDefCatID.CURRENT) { false }
         }
     }
 

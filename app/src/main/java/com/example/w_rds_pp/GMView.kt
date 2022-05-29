@@ -68,8 +68,12 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             invalidate()
         }
 
-    /** you may want to invalidate gm view after you change map**/
-    val hlIdWithCriteria: MutableMap<GMHighlightCategoryID, (GMChar) -> Boolean> = mutableMapOf()
+    private val _hlIdWithCriteria: MutableMap<GMHighlightCategoryID, (GMChar) -> Boolean> = mutableMapOf()
+    val hlIdWithCriteria: Map<GMHighlightCategoryID, (GMChar) -> Boolean> = _hlIdWithCriteria
+    fun changeHLIdWithCriteria(id: GMHighlightCategoryID, criteria: ((GMChar) -> Boolean)?) {
+        if(criteria == null) _hlIdWithCriteria.remove(id) else _hlIdWithCriteria[id] = criteria
+        invalidate()
+    }
 
     var onLetterSelected: (GMChar) -> Unit = { Log.d(TAG, "onLetterSelected: ds=${it}") }
 
@@ -157,7 +161,7 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         for(line in m.processedText) {
             for(word in line) {
                 for(gmChar in word) {
-                    val hlCriteria = hlIdWithCriteria.toList().filter { (_, f) -> f(gmChar) }
+                    val hlCriteria = _hlIdWithCriteria.toList().filter { (_, f) -> f(gmChar) }
                     val p = if (hlCriteria.isNotEmpty()) createHLPaint(hlCriteria[0].first) else majorPaint
                     canvas.printCharacter(gmChar.major, x, y, p)
                     canvas.printCharacter(gmChar.minor, x, y + tm.majorCharWidth + tm.majorMinorYSpace, minorPaint)
