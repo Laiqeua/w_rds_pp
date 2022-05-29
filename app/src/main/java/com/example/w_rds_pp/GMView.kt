@@ -117,7 +117,7 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         fun splitWordIntoWords(word: GMStr): List<GMStr> =
             if(word.size > maxCharactersInLine)
                 (listOf(word.subList(0, maxCharactersInLine))
-                        + splitWordIntoWords(word.subList(maxCharactersInLine - 1, word.size)))
+                        + splitWordIntoWords(word.subList(maxCharactersInLine, word.size)))
             else listOf(word)
 
         val words = text
