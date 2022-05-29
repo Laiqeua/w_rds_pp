@@ -182,13 +182,14 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private fun applyTheme() {
-        minorPaint.textSize = tm.minorCharWidth
+        minorPaint.textSize = findFontSize(tm.minorCharWidth, FindFontSize.WIDTH, paint = minorPaint)
         minorPaint.color = tm.minorCharColor
 
-        majorPaint.textSize = tm.majorCharWidth
+        val majorTextSize = findFontSize(tm.majorCharWidth, FindFontSize.WIDTH, paint = majorPaint)
+        majorPaint.textSize = majorTextSize
         majorPaint.color = tm.majorCharColor
 
-        majorHLPaint.textSize = tm.majorCharWidth
+        majorHLPaint.textSize = majorTextSize
         majorHLPaint.color = tm.majorHLCharColor
     }
 
