@@ -38,7 +38,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:textSize="20sp"
-            android:src="@drawable/ic_restart"
+            android:src="@mipmap/new_reset_icon"
             android:contentDescription="@string/reset"/>
     </LinearLayout>
 
