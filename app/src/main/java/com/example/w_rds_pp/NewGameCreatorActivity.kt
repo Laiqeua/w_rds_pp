@@ -88,7 +88,7 @@ class NewGameCreatorActivity : AppCompatActivity() {
     private fun create() = lifecycleScope.launch(Dispatchers.IO) {
         // todo add max wait time
         while (quote == null) { delay(3) }
-        val gs = GameState.new(quote!!.quote, difficulty)
+        val gs = GameState.new(quote!!, difficulty)
         gs.saveToPref(CURRENT_GAME_STATE_PREF_KEY, pref)
         setResult(NEW_GAME_HAS_BEEN_CREATED)
         finish()

@@ -7,7 +7,7 @@ import java.lang.Double.max
 import java.lang.Double.min
 
 interface GameState {
-    val originalText: String
+    val quote: Quote
     val gmStr: GMStr
     val lettersToGuess: Set<Char>
     val alreadyUsedChars: Set<Char>
@@ -15,14 +15,14 @@ interface GameState {
     val howLongIsBeingSolvedSec: Int
 
     fun serialize(): String = GsonInstance.toJson(this)
-    fun isCompleted(): Boolean = gmStr.map { it.major }.joinToString("") == originalText.uppercase()
+    fun isCompleted(): Boolean = gmStr.map { it.major }.joinToString("") == quote.quote.uppercase()
 
     companion object {
-        fun new(text: String, difficulty: Double = 0.5, alphabet: List<Char> = Alphabets.EN): GameState {
-            val normalizedText = text.uppercase()
+        fun new(quote: Quote, difficulty: Double = 0.5, alphabet: List<Char> = Alphabets.EN): GameState {
+            val normalizedText = quote.quote.uppercase()
             val (major, lettersToGuess) = GameState.createMajorText(normalizedText, difficulty, alphabet)
             val minor = GameState.createMinorText(normalizedText, alphabet)
-            return GameStateImpl(text, GMStrHelper.fromStr(major, minor), lettersToGuess, emptySet(), null, 0)
+            return GameStateImpl(quote, GMStrHelper.fromStr(major, minor), lettersToGuess, emptySet(), null, 0)
         }
 
         fun deserializeGameState(s: String): GameState = GsonInstance.fromJson(s, GameStateImpl::class.java)
@@ -50,7 +50,7 @@ interface GameState {
 }
 
 data class GameStateImpl(
-    override val originalText: String,
+    override val quote: Quote,
     override val gmStr: GMStr,
     override val lettersToGuess: Set<Char>,
     override val alreadyUsedChars: Set<Char>,
@@ -59,7 +59,7 @@ data class GameStateImpl(
 ) : GameState
 
 interface MutableGameState : GameState {
-    override var originalText: String
+    override var quote: Quote
     override var gmStr: GMStr
     override var lettersToGuess: Set<Char>
     override var alreadyUsedChars: Set<Char>
@@ -71,9 +71,9 @@ class MGS_AutoSaveToSystemPreferences(
     private val prefKey: String,
     private val pref: SharedPreferences,
 ) : MutableGameState {
-    private val initGS: GameState = GameState.readImmutableGSFromPref(prefKey, pref) ?: GameState.new("")
+    private val initGS: GameState = GameState.readImmutableGSFromPref(prefKey, pref) ?: GameState.new(Quote(null, "Error MGS autosave to pref", "error"))
 
-    override var originalText: String = initGS.originalText
+    override var quote: Quote = initGS.quote
         set(value) { field = value; update() }
     override var gmStr: GMStr = initGS.gmStr
         set(value) { field = value; update() }
