@@ -13,16 +13,19 @@
             android:name=".NewGameCreatorActivity"
             android:exported="true"
             android:label="@string/title_activity_new_game_creator"
-            android:theme="@style/Theme.W_rds_pp.NoActionBar" />
+            android:theme="@style/Theme.W_rds_pp.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".GameActivity"
             android:exported="true"
             android:label="@string/title_activity_game"
-            android:theme="@style/Theme.W_rds_pp.NoActionBar" />
+            android:theme="@style/Theme.W_rds_pp.NoActionBar"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.W_rds_pp.NoActionBar">
+            android:theme="@style/Theme.W_rds_pp.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
