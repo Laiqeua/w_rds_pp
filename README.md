@@ -1,5 +1,6 @@
 # w_rds_pp -> wordsapp -> Words App
 
+Still not finished.
 
 ## Screenshots
 | Screenshot 1                          | Screenshot 2                          | Screenshot 3                          |
