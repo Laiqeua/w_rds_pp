@@ -53,7 +53,6 @@ object GMHLDefCatID {
 }
 
 class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-    // todo optimization processedText may be computed to many time
 
     var gm: GMStr = GMStrHelper.fromStr("_p_ _p_ _ q_ e_r__", "aqb cqa h ph rhegt")
         set(value) {
