@@ -12,6 +12,7 @@ interface GameState {
     val lettersToGuess: Set<Char>
     val alreadyUsedChars: Set<Char>
     val selectedGMChar: GMChar?
+    val howLongIsBeingSolvedSec: Int
 
     fun serialize(): String = GsonInstance.toJson(this)
     fun isCompleted(): Boolean = gmStr.map { it.major }.joinToString("") == originalText.uppercase()
@@ -21,7 +22,7 @@ interface GameState {
             val normalizedText = text.uppercase()
             val (major, lettersToGuess) = GameState.createMajorText(normalizedText, difficulty, alphabet)
             val minor = GameState.createMinorText(normalizedText, alphabet)
-            return GameStateImpl(text, GMStrHelper.fromStr(major, minor), lettersToGuess, emptySet(), null)
+            return GameStateImpl(text, GMStrHelper.fromStr(major, minor), lettersToGuess, emptySet(), null, 0)
         }
 
         fun deserializeGameState(s: String): GameState = GsonInstance.fromJson(s, GameStateImpl::class.java)
@@ -53,10 +54,9 @@ data class GameStateImpl(
     override val gmStr: GMStr,
     override val lettersToGuess: Set<Char>,
     override val alreadyUsedChars: Set<Char>,
-    override val selectedGMChar: GMChar?
-) : GameState {
-
-}
+    override val selectedGMChar: GMChar?,
+    override val howLongIsBeingSolvedSec: Int
+) : GameState
 
 interface MutableGameState : GameState {
     override var originalText: String
@@ -64,6 +64,7 @@ interface MutableGameState : GameState {
     override var lettersToGuess: Set<Char>
     override var alreadyUsedChars: Set<Char>
     override var selectedGMChar: GMChar?
+    override var howLongIsBeingSolvedSec: Int
 }
 
 class MGS_AutoSaveToSystemPreferences(
@@ -81,6 +82,8 @@ class MGS_AutoSaveToSystemPreferences(
     override var alreadyUsedChars: Set<Char> = initGS.alreadyUsedChars
         set(value) { field = value; update() }
     override var selectedGMChar: GMChar? = initGS.selectedGMChar
+        set(value) { field = value; update() }
+    override var howLongIsBeingSolvedSec: Int = initGS.howLongIsBeingSolvedSec
         set(value) { field = value; update() }
 
     fun update() = saveToPref(prefKey, pref)

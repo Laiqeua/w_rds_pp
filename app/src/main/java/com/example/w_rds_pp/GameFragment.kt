@@ -2,12 +2,17 @@ package com.example.w_rds_pp
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
+import java.util.Timer
+import java.util.TimerTask
+import java.util.concurrent.TimeUnit
 
 // todo try to remove !!s
 
@@ -20,11 +25,15 @@ class GameFragment : Fragment() {
     private lateinit var removeButton: ImageButton
     private lateinit var resetButton: ImageButton
 
+    private lateinit var timerView: TextView
+
     private var gm: GMStr = emptyList()
         get() = gs.gmStr
         set(value){ field = value; gmView.gm = value; gs.gmStr = value }
 
     var onPuzzleCompleted: () -> Unit = {}
+
+    private lateinit var timer: Timer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +55,7 @@ class GameFragment : Fragment() {
         gmView = v.findViewById(R.id.gm_view)
         removeButton = v.findViewById(R.id.remove_btn)
         resetButton = v.findViewById(R.id.reset_btn)
+        timerView = v.findViewById(R.id.time_view)
 
         keyboardView.onClick = ::onKeyboardsKeyClicked
         gmView.onLetterSelected = ::onGMCharSelected
@@ -58,8 +68,36 @@ class GameFragment : Fragment() {
 
         keyboardView.animationScope = lifecycleScope
 
+        updateTimerView()
+
         return v
     }
+
+    override fun onResume() {
+        super.onResume()
+        createAndStartTimer()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopAndRemoveTimer()
+    }
+
+    private fun createAndStartTimer() {
+        Log.d(TAG, "startTimer: ")
+        timer = Timer("GM", false)
+        timer.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                gs.howLongIsBeingSolvedSec += 1
+                updateTimerView()
+            }
+        }, 0, 1000)
+    }
+
+    private fun stopAndRemoveTimer(){
+        timer.cancel()
+    }
+
     private fun onKeyboardsKeyClicked(c: Char){
         if(gs.alreadyUsedChars.contains(c)){
             onGMCharSelected(gm.find { it.major == c }!!)
@@ -111,8 +149,16 @@ class GameFragment : Fragment() {
 
     private fun checkForCompletion() {
         if(gs.isCompleted()) {
+            stopAndRemoveTimer()
             onPuzzleCompleted()
         }
+    }
+
+    private fun updateTimerView(){
+        val sec = gs.howLongIsBeingSolvedSec.toLong()
+        val min = TimeUnit.MINUTES.convert(sec, TimeUnit.SECONDS)
+        val text: String = (if(min >= 60) "XX:" else String.format("%02d:", min)) + String.format("%02d", sec % 60)
+        timerView.text = text
     }
 
     companion object {
