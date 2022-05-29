@@ -16,7 +16,7 @@
     <string name="continue_game">Continue Game</string>
     <string name="w_underline">W ⎽⎽</string>
     <string name="congratulation">Congratulation</string>
-    <string name="you_successfully_solved_this_puzzle">You successfully solved this puzzle</string>
+    <string name="you_successfully_solved_this_puzzle">You solved this puzzle in </string>
     <string name="select_difficulty">Select Difficulty</string>
     <string name="easy">Easy</string>
     <string name="normal">Normal</string>

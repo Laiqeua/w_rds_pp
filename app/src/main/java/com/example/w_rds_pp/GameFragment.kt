@@ -155,10 +155,7 @@ class GameFragment : Fragment() {
     }
 
     private fun updateTimerView(){
-        val sec = gs.howLongIsBeingSolvedSec.toLong()
-        val min = TimeUnit.MINUTES.convert(sec, TimeUnit.SECONDS)
-        val text: String = (if(min >= 60) "XX:" else String.format("%02d:", min)) + String.format("%02d", sec % 60)
-        timerView.text = text
+        timerView.text = timerFormatter(gs.howLongIsBeingSolvedSec)
     }
 
     companion object {

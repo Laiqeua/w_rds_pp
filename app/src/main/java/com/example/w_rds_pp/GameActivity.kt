@@ -24,7 +24,7 @@ class GameActivity : AppCompatActivity() {
             Log.e(TAG, "onPuzzleCompeted: gs is null")
             return
         }
-        val congratulationFragment = CongratulationFragment.newInstance(gs.originalText)
+        val congratulationFragment = CongratulationFragment.newInstance(gs.originalText, timerFormatter(gs.howLongIsBeingSolvedSec))
         supportFragmentManager
             .beginTransaction()
             .setCustomAnimations(R.anim.enter, R.anim.exit)

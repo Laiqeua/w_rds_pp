@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import com.google.gson.Gson
+import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 val GsonInstance = Gson()
@@ -78,4 +79,10 @@ fun Canvas.printCharacter(c: Char, x: Float, y: Float, paint: Paint) {
     val cWidth = paint.measureCharWidth(c)
     val additionalMargin: Float = if(wWidth > cWidth) { (wWidth - cWidth) / 2 } else 0f
     drawText(charArrayOf(c), 0, 1, x + additionalMargin, y, paint)
+}
+
+fun timerFormatter(s: Int): String {
+    val sec = s.toLong()
+    val min = TimeUnit.MINUTES.convert(sec, TimeUnit.SECONDS)
+    return (if(min >= 60) "XX:" else String.format("%02d:", min)) + String.format("%02d", sec % 60)
 }

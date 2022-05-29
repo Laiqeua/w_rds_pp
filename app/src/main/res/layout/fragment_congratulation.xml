@@ -18,11 +18,12 @@
         android:contentDescription="@string/congratulation"/>
 
     <TextView
+        android:id="@+id/time_msg_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="50sp"
         android:layout_marginHorizontal="30sp"
-        android:layout_marginVertical="30sp"
+        android:layout_marginTop="30sp"
         android:fontFamily="@font/caveat_variable_font_wght"
         android:text="@string/you_successfully_solved_this_puzzle"/>
 
