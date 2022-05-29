@@ -9,8 +9,6 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-// todo back button
-
 class MainActivity : AppCompatActivity() {
     private lateinit var newGameBtn: Button
     private lateinit var continueGameBtn: Button
@@ -62,7 +60,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshContinueBtnVisibility() {
-//        continueGameBtn.visibility = (if(!isThereOngoingGame()) View.GONE else View.VISIBLE)
         continueGameBtn.isEnabled = isThereOngoingGame()
     }
 

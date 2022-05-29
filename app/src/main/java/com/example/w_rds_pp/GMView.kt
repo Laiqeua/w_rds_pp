@@ -41,19 +41,17 @@ data class GMTheme(
     val minorCharColor: Int = Color.BLUE,
     val majorDefaultHLCharColor: Int = Color.RED,
     val majorHLCharColors: Map<GMHighlightCategoryID, Int> = mapOf(
-
+        GMHLDefCatID.CURRENT to Color.RED
     ),
 )
 
 typealias GMHighlightCategoryID = String
 
 object GMHLDefCatID {
-    // really, I'm doing magical values after experience with opengl xd
-    val CURRENT: String = "current"
+    const val CURRENT: String = "current"
 }
 
 class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-
     var gm: GMStr = GMStrHelper.fromStr("_p_ _p_ _ q_ e_r__", "aqb cqa h ph rhegt")
         set(value) {
             field = value
@@ -78,7 +76,6 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val minorPaint = Paint()
     private val majorPaint = Paint()
-    private val majorHLPaint = Paint()
 
     private var boxes: List<Box> = listOf()
 
@@ -199,9 +196,6 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         val majorTextSize = findFontSize(tm.majorCharWidth, FindFontSize.WIDTH, paint = majorPaint)
         majorPaint.textSize = majorTextSize
         majorPaint.color = tm.majorCharColor
-
-        majorHLPaint.textSize = majorTextSize
-        majorHLPaint.color = tm.majorDefaultHLCharColor
     }
 
     private fun createHLPaint(hlId: GMHighlightCategoryID): Paint =

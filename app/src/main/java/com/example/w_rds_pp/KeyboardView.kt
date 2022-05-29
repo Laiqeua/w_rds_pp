@@ -150,7 +150,7 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
 
     private fun updateTextSize(value: Float) {
         keyPG.text.textSize = value
-        animations.forEach { _, pg -> pg.text.textSize = value }
+        animations.forEach { (_, pg) -> pg.text.textSize = value }
         disabledKeyPG.text.textSize = value
     }
 

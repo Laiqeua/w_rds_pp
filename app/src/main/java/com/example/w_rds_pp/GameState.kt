@@ -20,8 +20,8 @@ interface GameState {
     companion object {
         fun new(quote: Quote, difficulty: Double = 0.5, alphabet: List<Char> = Alphabets.EN): GameState {
             val normalizedText = quote.quote.uppercase()
-            val (major, lettersToGuess) = GameState.createMajorText(normalizedText, difficulty, alphabet)
-            val minor = GameState.createMinorText(normalizedText, alphabet)
+            val (major, lettersToGuess) = createMajorText(normalizedText, difficulty, alphabet)
+            val minor = createMinorText(normalizedText, alphabet)
             return GameStateImpl(quote, GMStrHelper.fromStr(major, minor), lettersToGuess, emptySet(), null, 0)
         }
 
@@ -44,7 +44,7 @@ interface GameState {
 
         fun readImmutableGSFromPref(prefKey: String, pref: SharedPreferences): GameState? {
             val serializedGS = pref.getString(prefKey, null) ?: return null
-            return GameState.deserializeGameState(serializedGS)
+            return deserializeGameState(serializedGS)
         }
     }
 }

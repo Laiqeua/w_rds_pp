@@ -14,10 +14,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class NewGameCreatorActivityResultContract : ActivityResultContract<Unit, Int>() {
-    override fun createIntent(context: Context, input: Unit?): Intent = Intent(context, NewGameCreatorActivity::class.java)
-
+    override fun createIntent(context: Context, input: Unit?): Intent =
+        Intent(context, NewGameCreatorActivity::class.java)
     override fun parseResult(resultCode: Int, intent: Intent?): Int = resultCode
-
 }
 
 class NewGameCreatorActivity : AppCompatActivity() {

@@ -84,7 +84,6 @@ class GameFragment : Fragment() {
     }
 
     private fun createAndStartTimer() {
-        Log.d(TAG, "startTimer: ")
         timer = Timer("GM", false)
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
@@ -159,12 +158,10 @@ class GameFragment : Fragment() {
     }
 
     companion object {
-        // todo why intellij do not generate tag automatically ?
         val TAG: String = GameFragment::class.java.name
 
         const val ARG_PREF_KEY = "gs_PrefKey"
 
-        // todo why java static
         @JvmStatic
         fun newInstance(prefKey: String) =
             GameFragment().apply {
@@ -172,6 +169,5 @@ class GameFragment : Fragment() {
                     putString(ARG_PREF_KEY, prefKey)
                 }
             }
-
     }
 }
