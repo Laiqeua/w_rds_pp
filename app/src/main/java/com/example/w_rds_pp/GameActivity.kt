@@ -30,7 +30,7 @@ class GameActivity : AppCompatActivity() {
 
         val db = AppsDatabase.instance(applicationContext)
         lifecycleScope.launch(Dispatchers.IO) {
-            db.solvedQuoteDao().insert(SolvedQuote(null, gs.quote.id ?: -1, gs.howLongIsBeingSolvedSec))
+            db.solvedDao().insert(Solved(null, gs.quote.id ?: -1, gs.howLongIsBeingSolvedSec))
         }
 
         val congratulationFragment = CongratulationFragment.newInstance(gs.quote.quote, timerFormatter(gs.howLongIsBeingSolvedSec))

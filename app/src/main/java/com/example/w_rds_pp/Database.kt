@@ -12,28 +12,18 @@ data class Quote (
 )
 
 @Entity
-data class SolvedQuote(
+data class Solved(
     @PrimaryKey(autoGenerate = true) val id: Long?,
     val quoteId: Long,
     val time: Int,
 )
 
-@DatabaseView("""
-    select q.id as quoteId,
-           q.quote,
-           q.category,
-           sq.id as solvedQuoteId,
-           sq.time
-    from SolvedQuote as sq
-    join Quote as q on q.id = sq.quoteId
-    order by sq.id desc
-""")
-data class SolvedQuoteWithQuote(
-    val quoteId: Long,
-    val quote: String,
-    val category: String,
-    val solvedQuoteId: Long,
-    val time: Int,
+data class SolvedWithQuote(
+    @Embedded(prefix = "s_")
+    val solved: Solved,
+
+    @Embedded(prefix = "q_")
+    val quote: Quote,
 )
 
 @Dao
@@ -58,30 +48,43 @@ interface QuoteDao {
 }
 
 @Dao
-interface SolvedQuoteDao {
+interface SolvedDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(sq: SolvedQuote): Long
+    fun insert(sq: Solved): Long
+}
 
-    @Query("select * from SolvedQuoteWithQuote")
-    fun selectSolvedQuotesWithQuotes(): LiveData<List<SolvedQuoteWithQuote>>
+@Dao
+interface SolvedWithQuoteDao {
+    @Query("""
+        select q.id as q_id,
+               q.quote as q_quote,
+               q.category as q_category,
+               s.id as s_id,
+               q.id as s_quoteId,
+               s.time as s_time
+        from Solved as s
+        join Quote as q on q.id = s.quoteId
+        order by s.id desc
+        """)
+    fun selectSolvedWithQuote(): LiveData<List<SolvedWithQuote>>
 }
 
 @Database(
-    entities = [Quote::class, SolvedQuote::class],
-    views =[SolvedQuoteWithQuote::class],
+    entities = [Quote::class, Solved::class],
     version = 1,
     exportSchema = true,
 )
 abstract class AppsDatabase : RoomDatabase() {
     abstract fun quoteDao(): QuoteDao
-    abstract fun solvedQuoteDao(): SolvedQuoteDao
+    abstract fun solvedDao(): SolvedDao
+    abstract fun solvedWithQuoteDao(): SolvedWithQuoteDao
     companion object {
         private var OBJ: AppsDatabase? = null
         fun instance(context: Context): AppsDatabase {
             if(OBJ != null) return OBJ!!
             synchronized(this) {
                 if(OBJ != null) return OBJ!!
-                OBJ = Room.databaseBuilder(context, AppsDatabase::class.java, "WordsAppDatabase3")
+                OBJ = Room.databaseBuilder(context, AppsDatabase::class.java, "WordsAppDatabase4")
                           .createFromAsset("quotes.db")
                           .build()
                 return OBJ!!

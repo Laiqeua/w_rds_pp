@@ -1,7 +1,6 @@
 package com.example.w_rds_pp
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,34 +8,33 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-class SolvedQuotesFragment : Fragment() {
+class AllSolvedQuotesListFragment : Fragment() {
     private lateinit var quotesContainer: LinearLayout
 
     private lateinit var li: LayoutInflater
+
+    var onSolvedSelected: (SolvedWithQuote) -> Unit = {}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val v = inflater.inflate(R.layout.fragment_solved_quotes, container, false)
+        val v = inflater.inflate(R.layout.fragment_all_solved_quotes_list, container, false)
         li = inflater
 
         quotesContainer = v.findViewById(R.id.container)
 
         val db = AppsDatabase.instance(requireContext())
         lifecycleScope.launch(Dispatchers.IO) {
-            val livedata = db.solvedQuoteDao()
-                             .selectSolvedQuotesWithQuotes()
+            val liveData = db.solvedWithQuoteDao().selectSolvedWithQuote()
             lifecycleScope.launch(Dispatchers.Main) {
-                livedata.observe(viewLifecycleOwner) { onListChanged(it) }
+                liveData.observe(viewLifecycleOwner) {
+                    updateList(it)
+                }
             }
         }
 
@@ -44,23 +42,27 @@ class SolvedQuotesFragment : Fragment() {
     }
 
     @SuppressLint("InflateParams")
-    private fun onListChanged(newList: List<SolvedQuoteWithQuote>){
+    private fun updateList(newList: List<SolvedWithQuote>) {
         quotesContainer.removeAllViews()
         for(it in newList) {
             quotesContainer.addView(createRow(it))
         }
     }
 
-    private fun createRow(sqWithQ: SolvedQuoteWithQuote) = li.inflate(R.layout.solved_quote_row, null).apply {
+    private fun createRow(sqWithQ: SolvedWithQuote) = li.inflate(R.layout.solved_quote_row, null).apply {
         findViewById<TextView>(R.id.text).apply {
-            text = shortTextBeautifully(sqWithQ.quote, 70)
+            text = shortTextBeautifully(sqWithQ.quote.quote, 70)
         }
         findViewById<TextView>(R.id.time).apply {
-            text = timerFormatter(sqWithQ.time)
+            text = timerFormatter(sqWithQ.solved.time)
+        }
+        setOnLongClickListener {
+            onSolvedSelected(sqWithQ)
+            true
         }
     }
 
     companion object {
-        fun newInstance() = SolvedQuotesFragment()
+        fun newInstance() = AllSolvedQuotesListFragment()
     }
 }

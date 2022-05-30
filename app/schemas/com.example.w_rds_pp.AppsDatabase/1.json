@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e434896fe04972b1e9d05a0bc35f5ce7",
+    "identityHash": "2103a3527bf3f7d696bd29e90b6114a4",
     "entities": [
       {
         "tableName": "Quote",
@@ -37,7 +37,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "SolvedQuote",
+        "tableName": "Solved",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `quoteId` INTEGER NOT NULL, `time` INTEGER NOT NULL)",
         "fields": [
           {
@@ -69,15 +69,10 @@
         "foreignKeys": []
       }
     ],
-    "views": [
-      {
-        "viewName": "SolvedQuoteWithQuote",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS select q.id as quoteId,\n           q.quote,\n           q.category,\n           sq.id as solvedQuoteId,\n           sq.time\n    from SolvedQuote as sq\n    join Quote as q on q.id = sq.quoteId"
-      }
-    ],
+    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e434896fe04972b1e9d05a0bc35f5ce7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2103a3527bf3f7d696bd29e90b6114a4')"
     ]
   }
 }

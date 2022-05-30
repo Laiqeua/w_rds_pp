@@ -26,4 +26,6 @@
     <string name="remove">Remove</string>
     <string name="reset">Reset</string>
     <string name="any">Any</string>
+    <string name="category">Category:</string>
+    <string name="you_solved_it_in">You solved it in:</string>
 </resources>

@@ -33,6 +33,13 @@ class MainActivity : AppCompatActivity() {
 
         continueGameBtn.setOnClickListener { continueGame() }
         newGameBtn.setOnClickListener { newGame() }
+
+        val historyFragment = AllSolvedQuotesListFragment.newInstance()
+        historyFragment.onSolvedSelected = ::onSolvedQuoteSelected
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.solved_quotes_fragment, historyFragment)
+            .commit()
     }
 
     override fun onResume() {
@@ -61,6 +68,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshContinueBtnVisibility() {
         continueGameBtn.isEnabled = isThereOngoingGame()
+    }
+
+    private fun onSolvedQuoteSelected(sq: SolvedWithQuote) {
+        startActivity(JustShowSolvedActivity.createIntent(this, sq))
     }
 
     companion object {

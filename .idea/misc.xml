@@ -17,6 +17,7 @@
         <entry key="app/src/main/res/layout/activity_game.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_new_game_creator.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_solved_quote_view.xml" value="0.19603825136612021" />
         <entry key="app/src/main/res/layout/category_selection_any_category_button_template.xml" value="0.2930253623188406" />
         <entry key="app/src/main/res/layout/category_selection_category_button_template.xml" value="0.1612008072653885" />
         <entry key="app/src/main/res/layout/category_selection_row_template.xml" value="0.1" />
@@ -25,8 +26,10 @@
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.2713541666666667" />
         <entry key="app/src/main/res/layout/fragment_game.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_new_game_creator_popup.xml" value="0.15237134207870837" />
+        <entry key="app/src/main/res/layout/fragment_quote.xml" value="0.19603825136612021" />
         <entry key="app/src/main/res/layout/fragment_select_category.xml" value="0.11024217961654895" />
         <entry key="app/src/main/res/layout/fragment_select_difficulty.xml" value="0.2713541666666667" />
+        <entry key="app/src/main/res/layout/fragment_solved_quote.xml" value="0.19603825136612021" />
         <entry key="app/src/main/res/layout/fragment_solved_quotes.xml" value="0.21209016393442623" />
         <entry key="app/src/main/res/layout/fragment_text.xml" value="0.1" />
         <entry key="app/src/main/res/layout/select_category__all_categories_button_template.xml" value="0.10185185185185185" />
