@@ -30,8 +30,8 @@ class GameActivity : AppCompatActivity() {
 
         val db = AppsDatabase.instance(applicationContext)
         lifecycleScope.launch(Dispatchers.IO) {
-            val id = db.solvedDao().insert(Solved(null, gs.quote.id ?: -1, gs.howLongIsBeingSolvedSec))
-            val sq = db.solvedWithQuoteDao().selectSolvedWithQuoteBySolvedId(id)
+            val id = db.dao().insertSolved(Solved(null, gs.quote.id ?: -1, gs.howLongIsBeingSolvedSec))
+            val sq = db.dao().selectSolvedWithQuoteBySolvedId(id)
             sq ?: run {
                 Log.e(TAG, "onPuzzleCompeted: probably db.solvedDao().insert() inserts in bg")
                 finishActivity(-1)

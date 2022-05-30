@@ -26,35 +26,30 @@ data class SolvedWithQuote(
     val quote: Quote,
 ) : java.io.Serializable
 
+data class CategoryWithNumberOfUnsolvedQuotes(
+    val category: String,
+    val n: Int
+)
+
 @Dao
-interface QuoteDao {
+interface AllInOneDao {
     // todo will db optimalize this or it will select every row, sort and choose first ?
-    @Query("select * from quote where id not in (:except) order by random() limit 1")
-    fun findRandom(except: List<Long> = emptyList()): Quote?
+    @Query("select * from quote order by random() limit 1")
+    fun findRandomQuote(): Quote?
 
-    @Query("select * from quote where category = (:category) and id not in (:except) order by random() limit 1")
-    fun findRandomWhereCategory(category: String, except: List<Long> = emptyList()): Quote?
+    @Query("select * from quote where category = (:category) order by random() limit 1")
+    fun findRandomQuoteWhereCategory(category: String): Quote?
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrUpdate(quote: Quote): Long
+    fun insertQuote(quote: Quote): Long
 
-    @Query("""
-        select category
-        from quote
-        group by category
-        order by category
-    """)
+    @Query("select category from quote group by category order by category")
     fun findCategories(): List<String>
-}
 
-@Dao
-interface SolvedDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(sq: Solved): Long
-}
+    fun insertSolved(sq: Solved): Long
 
-@Dao
-interface SolvedWithQuoteDao {
     @Query("""
         select q.id as q_id,
                q.quote as q_quote,
@@ -67,7 +62,8 @@ interface SolvedWithQuoteDao {
         order by s.id desc
         """)
     fun selectSolvedWithQuote(): LiveData<List<SolvedWithQuote>>
-        @Query("""
+
+    @Query("""
         select q.id as q_id,
                q.quote as q_quote,
                q.category as q_category,
@@ -78,9 +74,8 @@ interface SolvedWithQuoteDao {
         join Quote as q on q.id = s.quoteId
         where s.id = (:id)
         order by s.id desc
-        """)
+    """)
     fun selectSolvedWithQuoteBySolvedId(id: Long): SolvedWithQuote?
-
 
 }
 
@@ -90,9 +85,7 @@ interface SolvedWithQuoteDao {
     exportSchema = true,
 )
 abstract class AppsDatabase : RoomDatabase() {
-    abstract fun quoteDao(): QuoteDao
-    abstract fun solvedDao(): SolvedDao
-    abstract fun solvedWithQuoteDao(): SolvedWithQuoteDao
+    abstract fun dao(): AllInOneDao
     companion object {
         private var OBJ: AppsDatabase? = null
         fun instance(context: Context): AppsDatabase {

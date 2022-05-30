@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +30,7 @@ class AllSolvedQuotesListFragment : Fragment() {
 
         val db = AppsDatabase.instance(requireContext())
         lifecycleScope.launch(Dispatchers.IO) {
-            val liveData = db.solvedWithQuoteDao().selectSolvedWithQuote()
+            val liveData = db.dao().selectSolvedWithQuote()
             lifecycleScope.launch(Dispatchers.Main) {
                 liveData.observe(viewLifecycleOwner) {
                     updateList(it)

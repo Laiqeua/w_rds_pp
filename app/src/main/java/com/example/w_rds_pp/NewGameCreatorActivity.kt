@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.lifecycle.lifecycleScope
-import androidx.room.Room
 import com.example.w_rds_pp.MGS_AutoSaveToSystemPreferences.Companion.saveToPref
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -49,12 +48,12 @@ class NewGameCreatorActivity : AppCompatActivity() {
     }
 
     private fun obtainQuote() = lifecycleScope.launch(Dispatchers.IO) {
-        quote = (if(category == null) db.quoteDao().findRandom() else db.quoteDao().findRandomWhereCategory(category!!))
+        quote = (if(category == null) db.dao().findRandomQuote() else db.dao().findRandomQuoteWhereCategory(category!!))
             ?: Quote(-1, "You forgot to populate db", ":(")
     }
 
     private fun runCategorySelector() = lifecycleScope.launch(Dispatchers.IO) {
-        val categories = db.quoteDao().findCategories()
+        val categories = db.dao().findCategories()
         catFragment = SelectCategoryFragment.newInstance(categories)
         catFragment.onCategorySelected = ::onCategorySelected
         supportFragmentManager
