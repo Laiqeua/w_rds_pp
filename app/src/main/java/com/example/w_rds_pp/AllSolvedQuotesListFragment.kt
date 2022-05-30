@@ -53,9 +53,6 @@ class AllSolvedQuotesListFragment : Fragment() {
         findViewById<TextView>(R.id.text).apply {
             text = shortTextBeautifully(sqWithQ.quote.quote, 70)
         }
-        findViewById<TextView>(R.id.time).apply {
-            text = timerFormatter(sqWithQ.solved.time)
-        }
         setOnLongClickListener {
             onSolvedSelected(sqWithQ)
             true
