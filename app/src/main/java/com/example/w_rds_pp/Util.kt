@@ -86,3 +86,18 @@ fun timerFormatter(s: Int): String {
     val min = TimeUnit.MINUTES.convert(sec, TimeUnit.SECONDS)
     return (if(min >= 60) "XX:" else String.format("%02d:", min)) + String.format("%02d", sec % 60)
 }
+
+fun shortTextBeautifully(text: String, maxLength: Int): String {
+    val words = text.split(" ")
+    var result = ""
+    var c = -1
+    for(word in words) {
+        if(c + 1 + word.length > maxLength) {
+            result += "..."
+            break
+        }
+        result += " " + word
+        c += word.length + 1
+    }
+    return result
+}

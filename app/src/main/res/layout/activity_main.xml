@@ -9,6 +9,7 @@
         tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/top_test"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,10 +19,22 @@
         android:text="@string/w_underline"
         android:textSize="100sp" />
 
+    <fragment
+        android:id="@+id/solved_quotes_fragment"
+        android:name="com.example.w_rds_pp.SolvedQuotesFragment"
+        app:layout_constraintTop_toBottomOf="@id/top_test"
+        app:layout_constraintBottom_toTopOf="@+id/action_btns_cotainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+    </fragment>
+
     <LinearLayout
+        android:id="@+id/action_btns_cotainer"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="80dp"
         android:orientation="vertical">
         <LinearLayout

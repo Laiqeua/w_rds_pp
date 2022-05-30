@@ -1,6 +1,7 @@
 package com.example.w_rds_pp
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Entity
@@ -8,6 +9,31 @@ data class Quote (
     @PrimaryKey(autoGenerate = true) val id: Long?,
     val quote: String,
     val category: String,
+)
+
+@Entity
+data class SolvedQuote(
+    @PrimaryKey(autoGenerate = true) val id: Long?,
+    val quoteId: Long,
+    val time: Int,
+)
+
+@DatabaseView("""
+    select q.id as quoteId,
+           q.quote,
+           q.category,
+           sq.id as solvedQuoteId,
+           sq.time
+    from SolvedQuote as sq
+    join Quote as q on q.id = sq.quoteId
+    order by sq.id desc
+""")
+data class SolvedQuoteWithQuote(
+    val quoteId: Long,
+    val quote: String,
+    val category: String,
+    val solvedQuoteId: Long,
+    val time: Int,
 )
 
 @Dao
@@ -26,20 +52,36 @@ interface QuoteDao {
         select category
         from quote
         group by category
+        order by category
     """)
     fun findCategories(): List<String>
 }
 
-@Database(entities = [Quote::class], version = 1, exportSchema = true)
+@Dao
+interface SolvedQuoteDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(sq: SolvedQuote): Long
+
+    @Query("select * from SolvedQuoteWithQuote")
+    fun selectSolvedQuotesWithQuotes(): LiveData<List<SolvedQuoteWithQuote>>
+}
+
+@Database(
+    entities = [Quote::class, SolvedQuote::class],
+    views =[SolvedQuoteWithQuote::class],
+    version = 1,
+    exportSchema = true,
+)
 abstract class AppsDatabase : RoomDatabase() {
     abstract fun quoteDao(): QuoteDao
+    abstract fun solvedQuoteDao(): SolvedQuoteDao
     companion object {
         private var OBJ: AppsDatabase? = null
         fun instance(context: Context): AppsDatabase {
             if(OBJ != null) return OBJ!!
             synchronized(this) {
                 if(OBJ != null) return OBJ!!
-                OBJ = Room.databaseBuilder(context, AppsDatabase::class.java, "WordsAppDatabase")
+                OBJ = Room.databaseBuilder(context, AppsDatabase::class.java, "WordsAppDatabase3")
                           .createFromAsset("quotes.db")
                           .build()
                 return OBJ!!

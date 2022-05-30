@@ -12,4 +12,5 @@
     <color name="diff_normal">#3F51B5</color>
     <color name="diff_hard">#F44336</color>
     <color name="diff_ultra">#E91E63</color>
+    <color name="solved_quotes_time_quote_divider">#616161</color>
 </resources>
