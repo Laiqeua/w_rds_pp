@@ -14,8 +14,8 @@ class SolvedFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            sq = GsonInstance.fromJson(it.getString("sq"), Solved::class.java)
-            q = GsonInstance.fromJson(it.getString("q"), Quote::class.java)
+            sq = it.getSerializable("sq") as Solved
+            q = it.getSerializable("q") as Quote
         }
     }
 
@@ -35,8 +35,8 @@ class SolvedFragment : Fragment() {
         fun newInstance(solvedQuote: Solved, quote: Quote) =
             SolvedFragment().apply {
                 arguments = Bundle().apply {
-                    putString("sq", GsonInstance.toJson(solvedQuote))
-                    putString("q", GsonInstance.toJson(quote))
+                    putSerializable("q", quote)
+                    putSerializable("sq", solvedQuote)
                 }
             }
     }

@@ -15,7 +15,7 @@ class CongratulationFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            sq = GsonInstance.fromJson(it.getString("sq"), SolvedWithQuote::class.java)
+            sq = it.getSerializable("sq") as SolvedWithQuote
         }
     }
 
@@ -34,7 +34,7 @@ class CongratulationFragment : Fragment() {
         fun newInstance(sq: SolvedWithQuote) =
             CongratulationFragment().apply {
                 arguments = Bundle().apply {
-                    putString("sq", GsonInstance.toJson(sq))
+                    putSerializable("sq", sq)
                 }
             }
     }

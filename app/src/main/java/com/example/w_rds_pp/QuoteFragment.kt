@@ -13,7 +13,7 @@ class QuoteFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            quote = GsonInstance.fromJson(  it.getString("quote"), Quote::class.java)
+            quote = it.getSerializable("quote") as Quote
         }
     }
 
@@ -31,7 +31,7 @@ class QuoteFragment : Fragment() {
         fun newInstance(quote: Quote) =
             QuoteFragment().apply {
                 arguments = Bundle().apply {
-                    putString("quote", GsonInstance.toJson(quote))
+                    putSerializable("quote", quote)
                 }
             }
     }

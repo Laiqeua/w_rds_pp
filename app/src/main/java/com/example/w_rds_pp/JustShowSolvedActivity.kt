@@ -11,12 +11,8 @@ class JustShowSolvedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_solved_quote_view)
-        val sqJson = intent.getStringExtra("sq") ?: run {
-            Log.e(TAG, "You must send sq in intent (You can use static createIntent())")
-            return
-        }
         try {
-            val sq: SolvedWithQuote = GsonInstance.fromJson(sqJson, SolvedWithQuote::class.java)
+            val sq = intent.getSerializableExtra("sq") as SolvedWithQuote
             supportFragmentManager
                 .beginTransaction()
                 .add(R.id.fragment_container, SolvedFragment.newInstance(sq.solved, sq.quote))
@@ -31,7 +27,7 @@ class JustShowSolvedActivity : AppCompatActivity() {
         val TAG: String = JustShowSolvedActivity::class.java.name
         fun createIntent(context: Context, sq: SolvedWithQuote): Intent =
             Intent(context, JustShowSolvedActivity::class.java).apply {
-                putExtra("sq", GsonInstance.toJson(sq))
+                putExtra("sq", sq)
             }
     }
 }

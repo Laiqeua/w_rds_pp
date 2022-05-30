@@ -9,14 +9,14 @@ data class Quote (
     @PrimaryKey(autoGenerate = true) val id: Long?,
     val quote: String,
     val category: String,
-)
+) : java.io.Serializable
 
 @Entity
 data class Solved(
     @PrimaryKey(autoGenerate = true) val id: Long?,
     val quoteId: Long,
     val time: Int,
-)
+) : java.io.Serializable
 
 data class SolvedWithQuote(
     @Embedded(prefix = "s_")
@@ -24,7 +24,7 @@ data class SolvedWithQuote(
 
     @Embedded(prefix = "q_")
     val quote: Quote,
-)
+) : java.io.Serializable
 
 @Dao
 interface QuoteDao {
