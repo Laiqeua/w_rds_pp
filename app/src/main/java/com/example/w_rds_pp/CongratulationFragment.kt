@@ -1,46 +1,40 @@
 package com.example.w_rds_pp
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.example.w_rds_pp.databinding.FragmentCongratulationBinding
 
 class CongratulationFragment : Fragment() {
-    private var text: String? = null
-    private var time: String? = null
-
-    private lateinit var textView: TextView
-    private lateinit var timeView: TextView
+    private lateinit var sq: SolvedWithQuote
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            text = it.getString("text")
-            time = it.getString("time")
+            sq = GsonInstance.fromJson(it.getString("sq"), SolvedWithQuote::class.java)
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val v = inflater.inflate(R.layout.fragment_congratulation, container, false)
-        textView = v.findViewById(R.id.quote)
-        timeView = v.findViewById(R.id.time_msg_view)
-        textView.text = text
-        timeView.text = "${timeView.text} $time"
-        return v
+    ): View {
+        val b = FragmentCongratulationBinding.inflate(inflater, container, false)
+        childFragmentManager.beginTransaction()
+            .add(R.id.fragment_container, SolvedFragment.newInstance(sq.solved, sq.quote))
+            .commit()
+        return b.root
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance(text: String, formattedTime: String) =
+        fun newInstance(sq: SolvedWithQuote) =
             CongratulationFragment().apply {
                 arguments = Bundle().apply {
-                    putString("text", text)
-                    putString("time", formattedTime)
+                    putString("sq", GsonInstance.toJson(sq))
                 }
             }
     }

@@ -67,6 +67,21 @@ interface SolvedWithQuoteDao {
         order by s.id desc
         """)
     fun selectSolvedWithQuote(): LiveData<List<SolvedWithQuote>>
+        @Query("""
+        select q.id as q_id,
+               q.quote as q_quote,
+               q.category as q_category,
+               s.id as s_id,
+               q.id as s_quoteId,
+               s.time as s_time
+        from Solved as s
+        join Quote as q on q.id = s.quoteId
+        where s.id = (:id)
+        order by s.id desc
+        """)
+    fun selectSolvedWithQuoteBySolvedId(id: Long): SolvedWithQuote?
+
+
 }
 
 @Database(

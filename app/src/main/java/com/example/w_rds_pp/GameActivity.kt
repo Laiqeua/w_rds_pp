@@ -30,15 +30,22 @@ class GameActivity : AppCompatActivity() {
 
         val db = AppsDatabase.instance(applicationContext)
         lifecycleScope.launch(Dispatchers.IO) {
-            db.solvedDao().insert(Solved(null, gs.quote.id ?: -1, gs.howLongIsBeingSolvedSec))
+            val id = db.solvedDao().insert(Solved(null, gs.quote.id ?: -1, gs.howLongIsBeingSolvedSec))
+            val sq = db.solvedWithQuoteDao().selectSolvedWithQuoteBySolvedId(id)
+            sq ?: run {
+                Log.e(TAG, "onPuzzleCompeted: probably db.solvedDao().insert() inserts in bg")
+                finishActivity(-1)
+                return@launch
+            }
+            lifecycleScope.launch(Dispatchers.Main) {
+                val congratulationFragment = CongratulationFragment.newInstance(sq)
+                supportFragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.enter, R.anim.exit)
+                    .replace(R.id.fragment_container, congratulationFragment)
+                    .commit()
+            }
         }
-
-        val congratulationFragment = CongratulationFragment.newInstance(gs.quote.quote, timerFormatter(gs.howLongIsBeingSolvedSec))
-        supportFragmentManager
-            .beginTransaction()
-            .setCustomAnimations(R.anim.enter, R.anim.exit)
-            .replace(R.id.fragment_container, congratulationFragment)
-            .commit()
     }
 
     companion object {
