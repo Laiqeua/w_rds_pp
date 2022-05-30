@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
@@ -50,12 +51,11 @@ class AllSolvedQuotesListFragment : Fragment() {
     }
 
     private fun createRow(sqWithQ: SolvedWithQuote) = li.inflate(R.layout.solved_quote_row, null).apply {
-        findViewById<TextView>(R.id.text).apply {
+        findViewById<Button>(R.id.text).apply {
             text = shortTextBeautifully(sqWithQ.quote.quote, 70)
-        }
-        setOnLongClickListener {
-            onSolvedSelected(sqWithQ)
-            true
+            setOnClickListener {
+                onSolvedSelected(sqWithQ)
+            }
         }
     }
 

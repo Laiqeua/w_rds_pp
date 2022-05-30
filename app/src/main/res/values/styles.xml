@@ -26,4 +26,12 @@
         <item name="android:layout_marginBottom">28dp</item>
         <item name="android:textAlignment">center</item>
     </style>
+    <style name="SolvedQuoteRow__Btn">
+        <item name="android:textSize">18sp</item>
+        <item name="android:padding">6dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="android:textColor">#535353</item>
+        <item name="backgroundTint">@color/solved_quote_row__bg_color</item>
+    </style>
 </resources>

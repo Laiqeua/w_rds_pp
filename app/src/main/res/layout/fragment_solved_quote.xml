@@ -15,13 +15,13 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:text="@string/you_solved_it_in"
-            android:textSize="36sp">
+            android:textSize="20sp">
         </TextView>
         <TextView
             android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="36sp"
+            android:textSize="20sp"
             tools:text="12:34"/>
     </LinearLayout>
 

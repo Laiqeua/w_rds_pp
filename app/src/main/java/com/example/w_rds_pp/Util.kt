@@ -93,7 +93,7 @@ fun shortTextBeautifully(text: String, maxLength: Int): String {
     var c = -1
     for(word in words) {
         if(c + 1 + word.length > maxLength) {
-            result += "..."
+            result += " ..."
             break
         }
         result += " " + word

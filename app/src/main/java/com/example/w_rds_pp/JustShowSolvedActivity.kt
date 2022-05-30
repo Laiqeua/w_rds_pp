@@ -10,7 +10,7 @@ import com.google.gson.JsonSyntaxException
 class JustShowSolvedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_solved_quote_view)
+        setContentView(R.layout.activity_just_show_solved)
         try {
             val sq = intent.getSerializableExtra("sq") as SolvedWithQuote
             supportFragmentManager
