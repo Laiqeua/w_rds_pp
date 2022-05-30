@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.lifecycle.lifecycleScope
 import com.example.w_rds_pp.MGS_AutoSaveToSystemPreferences.Companion.saveToPref
@@ -48,10 +49,23 @@ class NewGameCreatorActivity : AppCompatActivity() {
     }
 
     private fun obtainQuote() = lifecycleScope.launch(Dispatchers.IO) {
-        quote = (if(category == null) db.dao().findRandomQuote() else db.dao().findRandomQuoteWhereCategory(category!!))
-            ?: Quote(-1, "You forgot to populate db", ":(")
+        val firstAttempt = if (category == null) db.dao().findRandomNotSolvedQuote()
+                           else db.dao().findRandomNotSolvedQuoteWhereCategory(category!!)
+        quote = if (firstAttempt == null) {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        Toast.makeText(
+                            applicationContext,
+                            "You solved all from selected category, " +
+                                "Don't worry, You can always solve some of them again :)",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    (if (category == null) db.dao().findRandomQuote()
+                    else db.dao().findRandomQuoteWhereCategory(category!!)) ?: Quote(-1, "You forgot to populate db", ":(")
+                } else {
+                    firstAttempt
+                }
     }
-
     private fun runCategorySelector() = lifecycleScope.launch(Dispatchers.IO) {
         val categories = db.dao().findCategories()
         catFragment = SelectCategoryFragment.newInstance(categories)

@@ -40,6 +40,15 @@ interface AllInOneDao {
     @Query("select * from quote where category = (:category) order by random() limit 1")
     fun findRandomQuoteWhereCategory(category: String): Quote?
 
+    @Query("select * from quote where id not in (select quoteID from Solved) order by random() limit 1")
+    fun findRandomNotSolvedQuote(): Quote?
+
+    @Query("""select * from quote
+              where id not in (select quoteID from Solved)
+                    and category = (:category)
+              order by random()
+              limit 1""")
+    fun findRandomNotSolvedQuoteWhereCategory(category: String): Quote?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertQuote(quote: Quote): Long
