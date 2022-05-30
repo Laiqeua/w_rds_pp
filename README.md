@@ -3,9 +3,13 @@
 Still not finished.
 
 ## Screenshots
-| Screenshot 1                          | Screenshot 2                          | Screenshot 3                          |
-|---------------------------------------|---------------------------------------|---------------------------------------|
-| <img src="Screenshot_1653848830.png"> | <img src="Screenshot_1653848838.png"> | <img src="Screenshot_1653848866.png"> |
+|                                |                                |                                |
+|--------------------------------|--------------------------------|--------------------------------|
+| <img src="screenshots/b1.png"> | <img src="screenshots/b1.png"> | <img src="screenshots/b1.png"> |
+| <img src="screenshots/a3.png"> | <img src="screenshots/a4.png"> | <img src="screenshots/a.png">  |
+| <img src="screenshots/c1.png"> | <img src="screenshots/c2.png"> | <img src="screenshots/a6.png"> |
 
 <hr>
 <a href="https://www.flaticon.com/free-icons/reset" title="reset icons">Reset icons created by Freepik - Flaticon</a>
+
+
