@@ -20,7 +20,7 @@ class NewGameCreatorActivityResultContract : ActivityResultContract<Unit, Int>()
 }
 
 class NewGameCreatorActivity : AppCompatActivity() {
-    private var difficulty: Double = 0.0
+    private var difficulty: Difficulty = Difficulty.DEFAULT
     // category == null means any category
     private var category: String? = null
 
@@ -79,7 +79,7 @@ class NewGameCreatorActivity : AppCompatActivity() {
         runDifficultySelector()
     }
 
-    private fun onDifficultySelected(d: Double) {
+    private fun onDifficultySelected(d: Difficulty) {
         difficulty = d
         create()
     }

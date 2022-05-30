@@ -13,7 +13,7 @@ class SelectDifficultyFragment : Fragment() {
     lateinit var hardBtn: Button
     lateinit var ultraBtn: Button
 
-    var onDifficultySelected: (Double) -> Unit = {}
+    var onDifficultySelected: (Difficulty) -> Unit = {}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,10 +24,10 @@ class SelectDifficultyFragment : Fragment() {
         normalBtn = v.findViewById(R.id.diff_normal)
         hardBtn = v.findViewById(R.id.diff_hard)
         ultraBtn = v.findViewById(R.id.diff_ultra)
-        easyBtn.setOnClickListener { onDifficultySelected(0.51) }
-        normalBtn.setOnClickListener { onDifficultySelected(0.79) }
-        hardBtn.setOnClickListener { onDifficultySelected(0.91) }
-        ultraBtn.setOnClickListener { onDifficultySelected(1.0) }
+        easyBtn.setOnClickListener { onDifficultySelected(Difficulty.EASY) }
+        normalBtn.setOnClickListener { onDifficultySelected(Difficulty.NORMAL) }
+        hardBtn.setOnClickListener { onDifficultySelected(Difficulty.HARD) }
+        ultraBtn.setOnClickListener { onDifficultySelected(Difficulty.ULTRA) }
         return v
     }
 }
