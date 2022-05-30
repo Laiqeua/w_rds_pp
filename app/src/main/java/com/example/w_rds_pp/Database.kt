@@ -99,7 +99,7 @@ abstract class AppsDatabase : RoomDatabase() {
             if(OBJ != null) return OBJ!!
             synchronized(this) {
                 if(OBJ != null) return OBJ!!
-                OBJ = Room.databaseBuilder(context, AppsDatabase::class.java, "WordsAppDatabase4")
+                OBJ = Room.databaseBuilder(context, AppsDatabase::class.java, "WordsAppDatabase5")
                           .createFromAsset("quotes.db")
                           .build()
                 return OBJ!!
