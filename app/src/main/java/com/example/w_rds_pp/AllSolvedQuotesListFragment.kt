@@ -28,7 +28,7 @@ class AllSolvedQuotesListFragment : Fragment() {
 
         quotesContainer = v.findViewById(R.id.container)
 
-        val db = AppsDatabase.instance(requireContext())
+        val db = WordsAppDatabase.instance(requireContext())
         lifecycleScope.launch(Dispatchers.IO) {
             val liveData = db.dao().selectSolvedWithQuote()
             lifecycleScope.launch(Dispatchers.Main) {
@@ -41,7 +41,6 @@ class AllSolvedQuotesListFragment : Fragment() {
         return v
     }
 
-    @SuppressLint("InflateParams")
     private fun updateList(newList: List<SolvedWithQuote>) {
         quotesContainer.removeAllViews()
         for(it in newList) {
@@ -49,14 +48,16 @@ class AllSolvedQuotesListFragment : Fragment() {
         }
     }
 
-    private fun createRow(sqWithQ: SolvedWithQuote) = li.inflate(R.layout.solved_quote_row, null).apply {
-        findViewById<Button>(R.id.text).apply {
-            text = shortTextBeautifully(sqWithQ.quote.quote, 70)
-            setOnClickListener {
-                onSolvedSelected(sqWithQ)
+    @SuppressLint("InflateParams")
+    private fun createRow(sqWithQ: SolvedWithQuote) =
+        li.inflate(R.layout.solved_quote_row, null).apply {
+            findViewById<Button>(R.id.text).apply {
+                text = shortTextBeautifully(sqWithQ.quote.quote, 70)
+                setOnClickListener {
+                    onSolvedSelected(sqWithQ)
+                }
             }
         }
-    }
 
     companion object {
         fun newInstance() = AllSolvedQuotesListFragment()

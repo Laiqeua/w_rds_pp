@@ -11,7 +11,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 
 
-class SelectCategoryFragment : Fragment() {
+class SelectCategoryFragment private constructor(): Fragment() {
     private lateinit var categories: List<String>
 
     /** null means all categories **/
@@ -20,7 +20,7 @@ class SelectCategoryFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            categories = it.getStringArrayList(CATEGORIES_BUNDLE_NAME)!!
+            categories = it.getStringArrayList(ARG_CATEGORIES_BUNDLE_NAME)!!
         }
     }
 
@@ -51,12 +51,11 @@ class SelectCategoryFragment : Fragment() {
     }
 
     companion object {
-        const val CATEGORIES_BUNDLE_NAME = "cat"
-        @JvmStatic
+        const val ARG_CATEGORIES_BUNDLE_NAME = "cat"
         fun newInstance(categories: List<String>) =
             SelectCategoryFragment().apply {
                 arguments = Bundle().apply {
-                    putStringArrayList(CATEGORIES_BUNDLE_NAME, ArrayList(categories))
+                    putStringArrayList(ARG_CATEGORIES_BUNDLE_NAME, ArrayList(categories))
                 }
             }
     }

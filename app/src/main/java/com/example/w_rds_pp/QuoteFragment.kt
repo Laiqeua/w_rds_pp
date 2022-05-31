@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.w_rds_pp.databinding.FragmentQuoteBinding
 
-class QuoteFragment : Fragment() {
+class QuoteFragment private constructor() : Fragment() {
     private lateinit var quote: Quote
 
     override fun onCreate(savedInstanceState: Bundle?) {

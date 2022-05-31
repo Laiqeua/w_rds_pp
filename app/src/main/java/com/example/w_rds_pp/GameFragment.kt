@@ -2,34 +2,23 @@ package com.example.w_rds_pp
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
+import com.example.w_rds_pp.databinding.FragmentGameBinding
 import java.util.Timer
 import java.util.TimerTask
-import java.util.concurrent.TimeUnit
 
-// todo try to remove !!s
-
-class GameFragment : Fragment() {
-    private lateinit var gsPrefKey: String
+class GameFragment private constructor(): Fragment() {
     private lateinit var gs: MutableGameState
 
-    private lateinit var keyboardView: KeyboardView
-    private lateinit var gmView: GMView
-    private lateinit var removeButton: ImageButton
-    private lateinit var resetButton: ImageButton
+    private lateinit var b: FragmentGameBinding
 
-    private lateinit var timerView: TextView
-
-    private var gm: GMStr = emptyList()
+    private var gmStr: GMStr = emptyList()
         get() = gs.gmStr
-        set(value){ field = value; gmView.gm = value; gs.gmStr = value }
+        set(value){ field = value; b.gmView.gm = value; gs.gmStr = value }
 
     var onPuzzleCompleted: () -> Unit = {}
 
@@ -37,41 +26,33 @@ class GameFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            gsPrefKey = it.getString(ARG_PREF_KEY, null)
-        }
+        val exMsg = "onCreate: Missing required argument ARG_GS_PREF_INFO, GameFragment should be created using GameFragment.instance()"
+        arguments ?: throw Exception(exMsg)
+        val gspi = arguments!!.getSerializable(ARG_GS_PREF_INFO) as GameStatePrefInfo
+        val pref = requireActivity().getSharedPreferences(gspi.name, Activity.MODE_PRIVATE)
+        gs = MGS_AutoSaveToSystemPreferences(gspi.key, pref)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val pref = requireActivity().getSharedPreferences(GAME_SATE_PREF_NAME, Activity.MODE_PRIVATE)
-        gs = MGS_AutoSaveToSystemPreferences(gsPrefKey, pref)
+    ): View {
+        b = FragmentGameBinding.inflate(inflater, container, false)
+        b.keyboardView.onClick = ::onKeyboardsKeyClicked
+        b.gmView.onLetterSelected = ::onGMCharSelected
+        b.removeBtn.setOnClickListener { resetSelected() }
+        b.resetBtn.setOnClickListener { resetAll() }
 
-        val v = inflater.inflate(R.layout.fragment_game, container, false)
+        b.keyboardView.disabledKeys = Alphabets.EN.filter { !gs.lettersToGuess.contains(it) }.toSet()
 
-        keyboardView = v.findViewById(R.id.keyboard_view)
-        gmView = v.findViewById(R.id.gm_view)
-        removeButton = v.findViewById(R.id.remove_btn)
-        resetButton = v.findViewById(R.id.reset_btn)
-        timerView = v.findViewById(R.id.time_view)
+        b.gmView.gm = gs.gmStr
 
-        keyboardView.onClick = ::onKeyboardsKeyClicked
-        gmView.onLetterSelected = ::onGMCharSelected
-        removeButton.setOnClickListener { resetSelected() }
-        resetButton.setOnClickListener { resetAll() }
-
-        keyboardView.disabledKeys = Alphabets.EN.filter { !gs.lettersToGuess.contains(it) }.toSet()
-
-        gmView.gm = gs.gmStr
-
-        keyboardView.animationScope = lifecycleScope
+        b.keyboardView.animationScope = lifecycleScope
 
         updateTimerView()
         setFixedLetterOnGMView()
 
-        return v
+        return b.root
     }
 
     override fun onResume() {
@@ -85,13 +66,13 @@ class GameFragment : Fragment() {
     }
 
     private fun createAndStartTimer() {
-        timer = Timer("GM", false)
+        timer = Timer(false)
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 gs.howLongIsBeingSolvedSec += 1
                 updateTimerView()
             }
-        }, 0, 1000)
+        }, 1000, 1000)
     }
 
     private fun stopAndRemoveTimer(){
@@ -100,26 +81,25 @@ class GameFragment : Fragment() {
 
     private fun onKeyboardsKeyClicked(c: Char){
         if(gs.alreadyUsedChars.contains(c)){
-            onGMCharSelected(gm.find { it.major == c }!!)
+            onGMCharSelected(gmStr.find { it.major == c }!!)
             return
         }
-        val selectedGMChar = gs.selectedGMChar ?: return  // todo it may not be good idea
-        if (selectedGMChar.major == '_' || gs.lettersToGuess.contains(selectedGMChar.major)) {
-            gm = gm.map {
-                if(it.minor == selectedGMChar.minor) {
+        if(gs.selectedGMChar == null) return
+        if (gs.selectedGMChar!!.major == '_' || gs.lettersToGuess.contains(gs.selectedGMChar!!.major)) {
+            gmStr = gmStr.map {
+                if(it.minor == gs.selectedGMChar!!.minor) {
                     if(it.major != '_'){
-                        gs.alreadyUsedChars = gs.alreadyUsedChars.filter { x -> x != it.major }.toSet()
+                        gs.alreadyUsedChars = gs.alreadyUsedChars.filter { x -> x != it.major }.toHashSet()
                     }
-                    val newIt = it.withMajor(c)
-                    newIt
+                    it.withMajor(c)
                 } else {
                     it
                 }
             }
-            gs.selectedGMChar = selectedGMChar.withMajor(c)
+            gs.selectedGMChar = gs.selectedGMChar!!.withMajor(c)
             gs.alreadyUsedChars = gs.alreadyUsedChars + setOf(c)
             // if user fills character we jump to next character to be filled if such exits
-            val nextGMChar = gm.find { it.i > gs.selectedGMChar!!.i && it.major == '_'}
+            val nextGMChar = gmStr.find { it.i > gs.selectedGMChar!!.i && it.major == '_'}
             if(nextGMChar != null) onGMCharSelected(nextGMChar)
         }
 
@@ -129,22 +109,22 @@ class GameFragment : Fragment() {
     private fun onGMCharSelected(gmChar: GMChar) {
         if(gmChar.major == '_' || gs.lettersToGuess.contains(gmChar.major)){
             gs.selectedGMChar = gmChar
-            gmView.changeHLIdWithCriteria(GMHLDefCatID.CURRENT) { c -> c.minor == gmChar.minor }
+            b.gmView.changeHLIdWithCriteria(GMHLDefCatID.CURRENT) { c -> c.minor == gmChar.minor }
         } else {
             gs.selectedGMChar = null
-            gmView.changeHLIdWithCriteria(GMHLDefCatID.CURRENT) { false }
+            b.gmView.changeHLIdWithCriteria(GMHLDefCatID.CURRENT) { false }
         }
     }
 
     private fun resetAll() {
-        gm = gm.map { if (gs.alreadyUsedChars.contains(it.major)) it.withMajor('_') else it }
+        gmStr = gmStr.map { if (gs.alreadyUsedChars.contains(it.major)) it.withMajor('_') else it }
         gs.alreadyUsedChars = emptySet()
     }
 
     private fun resetSelected(){
         if(gs.selectedGMChar == null) return
         gs.alreadyUsedChars = gs.alreadyUsedChars.filter { it != gs.selectedGMChar!!.major }.toSet()
-        gm = gm.map { if (it.minor == gs.selectedGMChar!!.minor) it.withMajor('_') else it }
+        gmStr = gmStr.map { if (it.minor == gs.selectedGMChar!!.minor) it.withMajor('_') else it }
     }
 
     private fun checkForCompletion() {
@@ -155,26 +135,23 @@ class GameFragment : Fragment() {
     }
 
     private fun updateTimerView(){
-        timerView.text = timerFormatter(gs.howLongIsBeingSolvedSec)
+        b.timeView.text = timerFormatter(gs.howLongIsBeingSolvedSec)
     }
 
     private fun setFixedLetterOnGMView() {
-        val fixedCharIndexes = gm
+        val fixedCharIndexes = gmStr
             .filter { it.major != '_' && !gs.lettersToGuess.contains(it.major) }
             .map { it.i }.toSet()
-        gmView.changeHLIdWithCriteria(GMHLDefCatID.SET_FIXED) { fixedCharIndexes.contains(it.i) }
+        b.gmView.changeHLIdWithCriteria(GMHLDefCatID.SET_FIXED) { fixedCharIndexes.contains(it.i) }
     }
 
     companion object {
         val TAG: String = GameFragment::class.java.name
-
-        const val ARG_PREF_KEY = "gs_PrefKey"
-
-        @JvmStatic
-        fun newInstance(prefKey: String) =
+        const val ARG_GS_PREF_INFO = "ARG_GS_PREF_INFO"
+        fun newInstance(gspi: GameStatePrefInfo) =
             GameFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PREF_KEY, prefKey)
+                    putSerializable(ARG_GS_PREF_INFO, gspi)
                 }
             }
     }

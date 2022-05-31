@@ -4,14 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.w_rds_pp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var newGameBtn: Button
-    private lateinit var continueGameBtn: Button
+    private lateinit var binding: ActivityMainBinding
 
     private lateinit var pref: SharedPreferences
 
@@ -24,15 +23,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        pref = getSharedPreferences(GAME_SATE_PREF_NAME, Context.MODE_PRIVATE)
+        pref = getSharedPreferences(PREF_NAME_GAME_STATE, Context.MODE_PRIVATE)
 
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        newGameBtn = findViewById(R.id.new_game_btn)
-        continueGameBtn = findViewById(R.id.continue_game_btn)
-
-        continueGameBtn.setOnClickListener { continueGame() }
-        newGameBtn.setOnClickListener { newGame() }
+        binding.continueGameBtn.setOnClickListener { continueGame() }
+        binding.newGameBtn.setOnClickListener { newGame() }
 
         val historyFragment = AllSolvedQuotesListFragment.newInstance()
         historyFragment.onSolvedSelected = ::onSolvedQuoteSelected
@@ -40,11 +37,12 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             .add(R.id.solved_quotes_fragment, historyFragment)
             .commit()
+
     }
 
     override fun onResume() {
         super.onResume()
-        refreshContinueBtnVisibility()
+        refreshContinueBtnActivity()
     }
 
     private fun continueGame() = if (isThereOngoingGame()) startGame() else newGame()
@@ -52,8 +50,11 @@ class MainActivity : AppCompatActivity() {
     private fun newGame() = newGameCreator.launch(null)
 
     private fun onNewGameCreated() = startGame()
+
     private fun onFailedToCreateNewGame(code: Int) {
-        Toast.makeText(applicationContext, "Error while creating new game", Toast.LENGTH_LONG).show()
+        val msg = "Error while creating new game, error code $code"
+        Log.e(TAG, "onFailedToCreateNewGame: $msg")
+        Toast.makeText(applicationContext, msg, Toast.LENGTH_LONG).show()
     }
 
     private fun startGame() {
@@ -61,13 +62,11 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun isThereOngoingGame(): Boolean {
-        if(!pref.contains(CURRENT_GAME_STATE_PREF_KEY)) return false
-        return !GameState.deserializeGameState(pref.getString(CURRENT_GAME_STATE_PREF_KEY, "")!!).isCompleted()
-    }
+    private fun isThereOngoingGame(): Boolean =
+        readGlobalGameStateFromSharedPreferences(this)?.isCompleted() == false
 
-    private fun refreshContinueBtnVisibility() {
-        continueGameBtn.isEnabled = isThereOngoingGame()
+    private fun refreshContinueBtnActivity() {
+        binding.continueGameBtn.isEnabled = isThereOngoingGame()
     }
 
     private fun onSolvedQuoteSelected(sq: SolvedWithQuote) {

@@ -1,15 +1,13 @@
 package com.example.w_rds_pp
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.example.w_rds_pp.databinding.FragmentCongratulationBinding
 
-class CongratulationFragment : Fragment() {
+class CongratulationFragment private constructor(): Fragment() {
     private lateinit var sq: SolvedWithQuote
 
     override fun onCreate(savedInstanceState: Bundle?) {

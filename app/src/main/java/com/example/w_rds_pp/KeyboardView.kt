@@ -26,7 +26,7 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
     var disabledKeys: Set<Char> = emptySet()
         set(value) { field = value; invalidate() }
 
-    var onClick: (Char) -> Unit = { Log.d(TAG, "onClick(default): c = $it") }
+    var onClick: (Char) -> Unit = { }
 
     private class PaintGroup {
         val bg: Paint = Paint()
@@ -170,8 +170,9 @@ class KeyboardView(context: Context, attrs: AttributeSet): View(context, attrs) 
 
     private fun startAnimationForKey(c: Char) {
         if(animations.contains(c)) return
+        animationScope ?: return
         animations[c] = createAnimationPaintGroup()
-        animationScope?.launch {
+        animationScope!!.launch {
             val range = (animationStartColor..animationEndColor) +
                         (animationStartColor..animationEndColor).reversed()
             val pg = animations[c]!!

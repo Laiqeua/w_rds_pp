@@ -11,6 +11,8 @@
         android:theme="@style/Theme.W_rds_pp">
         <activity
             android:name=".JustShowSolvedActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.W_rds_pp.NoActionBar"
             android:exported="true" />
         <activity
             android:name=".NewGameCreatorActivity"

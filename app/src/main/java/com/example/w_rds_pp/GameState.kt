@@ -3,6 +3,7 @@ package com.example.w_rds_pp
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.JsonSyntaxException
 import java.lang.Double.max
 import java.lang.Double.min
 
@@ -26,7 +27,13 @@ interface GameState {
             return GameStateImpl(quote, GMStrHelper.fromStr(major, minor), lettersToGuess, emptySet(), null, 0, difficulty)
         }
 
-        fun deserializeGameState(s: String): GameState = GsonInstance.fromJson(s, GameStateImpl::class.java)
+        fun deserializeGameState(s: String): GameState? {
+            return try {
+                GsonInstance.fromJson(s, GameStateImpl::class.java)
+            } catch (e: JsonSyntaxException) {
+                null
+            }
+        }
 
         private fun createMajorText(text: String, difficulty: Double, alphabet: List<Char>): Pair<String, Set<Char>> {
             val normalizedDifficulty = max(0.0, min(difficulty, 1.0))
@@ -100,9 +107,9 @@ class MGS_AutoSaveToSystemPreferences(
 }
 
 fun readGlobalGameStateFromSharedPreferences(pref: SharedPreferences): GameState? =
-    GameState.readImmutableGSFromPref(CURRENT_GAME_STATE_PREF_KEY, pref)
+    GameState.readImmutableGSFromPref(PREF_KEY_CURRENT_GAME_STATE, pref)
 
 fun readGlobalGameStateFromSharedPreferences(activity: Activity): GameState? =
-    readGlobalGameStateFromSharedPreferences(activity.getSharedPreferences(GAME_SATE_PREF_NAME, Context.MODE_PRIVATE))
+    readGlobalGameStateFromSharedPreferences(activity.getSharedPreferences(PREF_NAME_GAME_STATE, Context.MODE_PRIVATE))
 
 

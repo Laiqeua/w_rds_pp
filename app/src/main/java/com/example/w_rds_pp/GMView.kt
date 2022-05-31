@@ -159,11 +159,12 @@ class GMView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         for(line in m.processedText) {
             for(word in line) {
                 for(gmChar in word) {
-                    val hlCriteria = _hlIdWithCriteria.toList().filter { (_, f) -> f(gmChar) }
-                    val p = if (hlCriteria.isNotEmpty()) createHLPaint(hlCriteria[0].first) else majorPaint
+                    val Q = _hlIdWithCriteria.toList().filter { (_, f) -> f(gmChar) }
+                    val p = if (Q.isNotEmpty()) createHLPaint(Q[0].first) else majorPaint
                     canvas.printCharacter(gmChar.major, x, y, p)
                     canvas.printCharacter(gmChar.minor, x, y + tm.majorCharWidth + tm.majorMinorYSpace, minorPaint)
-                    boxes.add(Box(gmChar, RectF(x, y - tm.majorCharWidth, x + tm.majorCharWidth, y + m.deltaY - tm.lineSpacing)))
+                    val boxRect = RectF(x, y - tm.majorCharWidth, x + tm.majorCharWidth, y + m.deltaY - tm.lineSpacing)
+                    boxes.add(Box(gmChar, boxRect))
                     x += m.deltaX
                 }
                 x += m.deltaX

@@ -5,29 +5,24 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import com.example.w_rds_pp.databinding.FragmentSelectDifficultyBinding
 
-class SelectDifficultyFragment : Fragment() {
-    lateinit var easyBtn: Button
-    lateinit var normalBtn: Button
-    lateinit var hardBtn: Button
-    lateinit var ultraBtn: Button
-
+class SelectDifficultyFragment private constructor(): Fragment() {
     var onDifficultySelected: (Difficulty) -> Unit = {}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val v = inflater.inflate(R.layout.fragment_select_difficulty, container, false)
-        easyBtn = v.findViewById(R.id.diff_easy)
-        normalBtn = v.findViewById(R.id.diff_normal)
-        hardBtn = v.findViewById(R.id.diff_hard)
-        ultraBtn = v.findViewById(R.id.diff_ultra)
-        easyBtn.setOnClickListener { onDifficultySelected(Difficulty.EASY) }
-        normalBtn.setOnClickListener { onDifficultySelected(Difficulty.NORMAL) }
-        hardBtn.setOnClickListener { onDifficultySelected(Difficulty.HARD) }
-        ultraBtn.setOnClickListener { onDifficultySelected(Difficulty.ULTRA) }
-        return v
+    ): View {
+        val b = FragmentSelectDifficultyBinding.inflate(inflater, container, false)
+        b.diffEasy.setOnClickListener { onDifficultySelected(Difficulty.EASY) }
+        b.diffNormal.setOnClickListener { onDifficultySelected(Difficulty.NORMAL) }
+        b.diffHard.setOnClickListener { onDifficultySelected(Difficulty.HARD) }
+        b.diffUltra.setOnClickListener { onDifficultySelected(Difficulty.ULTRA) }
+        return b.root
+    }
+
+    companion object {
+        fun newInstance() = SelectDifficultyFragment()
     }
 }

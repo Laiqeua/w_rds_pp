@@ -11,16 +11,11 @@ class JustShowSolvedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_just_show_solved)
-        try {
-            val sq = intent.getSerializableExtra("sq") as SolvedWithQuote
-            supportFragmentManager
-                .beginTransaction()
-                .add(R.id.fragment_container, SolvedFragment.newInstance(sq.solved, sq.quote))
-                .commit()
-        } catch (e: JsonSyntaxException) {
-            Log.e(TAG, "sq must be to json serialized SolvedWithQuote (You can use static createIntent())", e)
-            return
-        }
+        val sq = intent.getSerializableExtra("sq") as SolvedWithQuote
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.fragment_container, SolvedFragment.newInstance(sq.solved, sq.quote))
+            .commit()
     }
 
     companion object {

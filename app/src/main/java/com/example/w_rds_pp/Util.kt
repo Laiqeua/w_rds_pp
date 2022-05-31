@@ -96,7 +96,7 @@ fun shortTextBeautifully(text: String, maxLength: Int): String {
             result += " ..."
             break
         }
-        result += " " + word
+        result += " $word"
         c += word.length + 1
     }
     return result

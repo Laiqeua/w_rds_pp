@@ -26,11 +26,6 @@ data class SolvedWithQuote(
     val quote: Quote,
 ) : java.io.Serializable
 
-data class CategoryWithNumberOfUnsolvedQuotes(
-    val category: String,
-    val n: Int
-)
-
 @Dao
 interface AllInOneDao {
     // todo will db optimalize this or it will select every row, sort and choose first ?
@@ -93,15 +88,15 @@ interface AllInOneDao {
     version = 1,
     exportSchema = true,
 )
-abstract class AppsDatabase : RoomDatabase() {
+abstract class WordsAppDatabase : RoomDatabase() {
     abstract fun dao(): AllInOneDao
     companion object {
-        private var OBJ: AppsDatabase? = null
-        fun instance(context: Context): AppsDatabase {
+        private var OBJ: WordsAppDatabase? = null
+        fun instance(context: Context): WordsAppDatabase {
             if(OBJ != null) return OBJ!!
             synchronized(this) {
                 if(OBJ != null) return OBJ!!
-                OBJ = Room.databaseBuilder(context, AppsDatabase::class.java, "WordsAppDatabase5")
+                OBJ = Room.databaseBuilder(context, WordsAppDatabase::class.java, DB_NAME)
                           .createFromAsset("quotes.db")
                           .build()
                 return OBJ!!

@@ -15,6 +15,7 @@
         <entry key="app/src/main/res/drawable/ic_w_rds_app.xml" value="1.0" />
         <entry key="app/src/main/res/drawable/logo_like_bg.xml" value="0.12962962962962962" />
         <entry key="app/src/main/res/layout/activity_game.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_just_show_solved.xml" value="0.21379781420765026" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_new_game_creator.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_solved_quote_view.xml" value="0.19603825136612021" />

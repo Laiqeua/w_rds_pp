@@ -24,7 +24,7 @@ class NewGameCreatorActivity : AppCompatActivity() {
     // category == null means any category
     private var category: String? = null
 
-    private lateinit var db: AppsDatabase
+    private lateinit var db: WordsAppDatabase
     private lateinit var pref: SharedPreferences
 
     private var quote: Quote? = null
@@ -42,8 +42,8 @@ class NewGameCreatorActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        db = AppsDatabase.instance(applicationContext)
-        pref = getSharedPreferences(GAME_SATE_PREF_NAME, Context.MODE_PRIVATE)
+        db = WordsAppDatabase.instance(applicationContext)
+        pref = getSharedPreferences(PREF_NAME_GAME_STATE, Context.MODE_PRIVATE)
         setContentView(R.layout.activity_new_game_creator)
         runCategorySelector()
     }
@@ -77,7 +77,7 @@ class NewGameCreatorActivity : AppCompatActivity() {
     }
 
     private fun runDifficultySelector() {
-        diffFragment = SelectDifficultyFragment()
+        diffFragment = SelectDifficultyFragment.newInstance()
         diffFragment.onDifficultySelected = ::onDifficultySelected
         supportFragmentManager
             .beginTransaction()
@@ -101,7 +101,7 @@ class NewGameCreatorActivity : AppCompatActivity() {
         // todo add max wait time
         while (quote == null) { delay(3) }
         val gs = GameState.new(quote!!, difficulty)
-        gs.saveToPref(CURRENT_GAME_STATE_PREF_KEY, pref)
+        gs.saveToPref(PREF_KEY_CURRENT_GAME_STATE, pref)
         setResult(NEW_GAME_HAS_BEEN_CREATED)
         finish()
     }
