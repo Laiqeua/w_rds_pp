@@ -7,13 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
 import androidx.lifecycle.lifecycleScope
+import com.example.w_rds_pp.databinding.FragmentAllSolvedQuotesListBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+// todo create row fragment
+
+// todo quotes should be provided to fragment
+
 class AllSolvedQuotesListFragment : Fragment() {
-    private lateinit var quotesContainer: LinearLayout
+    private lateinit var b: FragmentAllSolvedQuotesListBinding
 
     private lateinit var li: LayoutInflater
 
@@ -22,30 +26,35 @@ class AllSolvedQuotesListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val v = inflater.inflate(R.layout.fragment_all_solved_quotes_list, container, false)
+    ): View {
+        b = FragmentAllSolvedQuotesListBinding.inflate(inflater, container, false)
         li = inflater
-
-        quotesContainer = v.findViewById(R.id.container)
 
         val db = WordsAppDatabase.instance(requireContext())
         lifecycleScope.launch(Dispatchers.IO) {
             val liveData = db.dao().selectSolvedWithQuote()
             lifecycleScope.launch(Dispatchers.Main) {
                 liveData.observe(viewLifecycleOwner) {
-                    updateList(it)
+                    updateSolvedQuotesTextViewVisibility(it)
+                    updateContainer(it)
                 }
             }
         }
 
-        return v
+        updateSolvedQuotesTextViewVisibility(emptyList()) // todo it is ugly and not clear
+
+        return b.root
     }
 
-    private fun updateList(newList: List<SolvedWithQuote>) {
-        quotesContainer.removeAllViews()
+    private fun updateContainer(newList: List<SolvedWithQuote>) {
+        b.container.removeAllViews()
         for(it in newList) {
-            quotesContainer.addView(createRow(it))
+            b.container.addView(createRow(it))
         }
+    }
+
+    private fun updateSolvedQuotesTextViewVisibility(newList: List<SolvedWithQuote>) {
+        b.solvedQuotesTextView.visibility = if(newList.isEmpty()) View.GONE else View.VISIBLE
     }
 
     @SuppressLint("InflateParams")
